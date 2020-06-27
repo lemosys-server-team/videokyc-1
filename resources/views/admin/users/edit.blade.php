@@ -7,7 +7,7 @@
     <div class="breadcrumb-header justify-content-between">
         <div class="left-content">
           <div>
-            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Users</h2>
+            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Sales</h2>
           </div>
         </div>
     </div>
@@ -17,7 +17,7 @@
         {!! Form::open(['method' => 'POST','files'=>true,'route' => ['admin.users.update',$user->id],'class' => 'form-horizontal','id' => 'frmUser']) !!}
             @method('PUT')
         <div class="card-header py-3 cstm_hdr">
-            <h6 class="m-0 font-weight-bold text-primary">Edit User</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Edit Sale</h6>
         </div>
         <div class="card-body">
           <!--   <div class="form-group {{$errors->has('role_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">

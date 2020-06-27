@@ -61,24 +61,24 @@ class Schedules extends Controller
             ->editColumn('status', function ($schedule) {
                return ucwords($schedule->status);
             })
-            ->addColumn('sale_email', function($schedule){
-                return isset($schedule->sale->email)?$schedule->sale->email:'';
+            ->addColumn('user_email', function($schedule){
+                return isset($schedule->user->email)?$schedule->sale->email:'';
             })
-            ->addColumn('sale_mobile', function($schedule){
-                return isset($schedule->sale->mobile_number)?$schedule->sale->mobile_number:'';
+            ->addColumn('user_mobile', function($schedule){
+                return isset($schedule->user->mobile_number)?$schedule->sale->mobile_number:'';
             })
             ->addColumn('time', function($schedule){
                  return date(config('constants.TIME_FORMAT'), strtotime($schedule->datetime));
             })
-            ->filterColumn('sale_email', function ($query, $keyword) {
+            ->filterColumn('user_email', function ($query, $keyword) {
                 $keyword = strtolower($keyword);
-                  $query->whereHas('sale', function($query) use ($keyword){
+                  $query->whereHas('user', function($query) use ($keyword){
                   	 $query->whereRaw("email like ?", ["%$keyword%"]);
 		        });
             })
-            ->filterColumn('sale_mobile', function ($query, $keyword) {
+            ->filterColumn('user_mobile', function ($query, $keyword) {
                 $keyword = strtolower($keyword);
-                  $query->whereHas('sale', function($query) use ($keyword){
+                  $query->whereHas('user', function($query) use ($keyword){
                   	 $query->whereRaw("mobile_number like ?", ["%$keyword%"]);
 		        });
             })

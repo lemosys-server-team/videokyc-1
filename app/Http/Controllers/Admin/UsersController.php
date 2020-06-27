@@ -118,8 +118,8 @@ class UsersController extends Controller
             'role_id'           => 'required', 
             'employee_id'       => 'required', 
             'name'              => 'required', 
-            'email'             => 'required|unique:'.with(new User)->getTable().',email',
-            'mobile_number'     => 'required',
+            'email'             => 'required',
+            'mobile_number'     => 'required|unique:'.with(new User)->getTable().',mobile_number',
             'profile_picture'   => 'image',
         ];
 
@@ -185,8 +185,8 @@ class UsersController extends Controller
            /* 'role_id'           => 'required', */
             'name'              => 'required', 
             'employee_id'       => 'required',  
-            'email'             => 'required|unique:'.with(new User)->getTable().',email,'.$user->getKey(),
-            'mobile_number'     => 'required',
+            'email'             => 'required',
+            'mobile_number'     => 'required|unique:'.with(new User)->getTable().',mobile_number,'.$user->getKey(),
             'profile_picture'   => 'image'
         ];
        

@@ -7,7 +7,7 @@
     <div class="breadcrumb-header justify-content-between">
       <div class="left-content">
           <div>
-            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Users</h2>
+            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Sales</h2>
           </div>
       </div>
     </div>
@@ -16,10 +16,10 @@
             <div class="card">
                 {!! Form::open(['method' => 'POST','files'=>true,'route' => ['admin.users.store'],'class' => 'form-horizontal','id' => 'frmUser']) !!}
                 <div class="card-header py-3 cstm_hdr">
-                    <h6 class="m-0 font-weight-bold text-primary">Add User</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Add Sale</h6>
                 </div>
                 <div class="card-body">
-                    <div  class="form-group {{$errors->has('role_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                    <div  class="form-group {{$errors->has('role_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}" style="display: none;">
                         <label class="col-md-3 control-label" for="role_id">Type <span style="color:red">*</span></label>
                         <div class="col-md-6">
                             {!! Form::select('role_id[]', $roles, old('role_id'), ['class' => 'form-control select2','id'=>'role_id','title'=>'Select Type', 'data-error-container'=>'#role_id-errors']) !!}
