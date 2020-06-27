@@ -22,6 +22,7 @@
 if(env('API_URL')=="" || env('API_URL')==url('/')){
 	Auth::routes(['register'=>false]);
 	Route::get('index', 'HomeController@index')->name('index');
+	Route::post('register', 'HomeController@register')->name('register');
 }
 
 Route::group(['middleware' => ['frontend']], function(){	
