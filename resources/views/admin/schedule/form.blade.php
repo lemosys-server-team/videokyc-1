@@ -63,7 +63,7 @@
                         </div>
                     </div>
                     <div class="form-group {{$errors->has('sale_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                       <label class="col-md-3 control-label" for="user_id">Sales <span style="color:red">*</span></label>
+                       <label class="col-md-3 control-label" for="user_id">Sales  <span style="color:red">*</span></label>
                         <div class="col-md-6">
                             {!! Form::select('sale_id', $sales, old('sale_id', isset($schedule->sale_id)?$schedule->sale_id:''), ['data-error-container'=>'#sale_id_error', 'id'=>'sale_id', 'class' => 'select2 form-control', 'placeholder' => '-Select Customer-']) !!}
                             <span id="sale_id_error"></span>
