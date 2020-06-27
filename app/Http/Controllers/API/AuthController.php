@@ -50,36 +50,31 @@ class AuthController extends Controller
      * @return \Illuminate\Http\Response 
      */ 
 
-    public function login(Request $request){        
-        $rules =   ['email' => 'required', 
-                    'password' => 'required'];
-                    
-        $messages = [];
-        $validator = Validator::make($request->all(), $rules, $messages)->setAttributeNames(['email'=>'email or username']);        
-        if ($validator->fails()) { 
-            return response()->json(['message'=>$validator->errors()->first()]);    
-        }       
+    public function login(Request $request){       
+        $rules =   ['mobile_number' => 'required', 
+                    'type'=>'required', 
+                    'otp' => 'required'];
+        
+        $validator = Validator::make($request->all(), $rules);   
 
-        $email = $request->input('email');
-        $fieldType = filter_var($email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-        $credentials= [$fieldType => $email, 'password'=>$request->get('password')];
+        if ($validator->fails()) {
+            return response()->json(['status'=>false,'message'=>$validator->errors()->first()]);
+        }    
+        $data=$request->all();  
+        $type=$data['type'];
+        $user = User::whereHas('roles', function($query) use ($type){
+          $query->where('id', $type);
+        })->where(array('mobile_number'=>$data['mobile_number']))->first();
+        
 
-        if(Auth::attempt($credentials)){
-            $user = Auth::user();
-
-            if($user->hasRole(config('constants.ROLE_TYPE_SUPERADMIN_ID')))
-                return response()->json(['message'=>trans('auth.failed')]);
-
-            if($user->is_active==false){
-                return response()->json(['message'=>trans('auth.noactive')]);
-            }
-            // For store access token of user
+        if($user){
+             // For store access token of user
             $tokenResult = $user->createToken('Login Token');
             $token = $tokenResult->token;
 
             $response['status'] = true; 
             $response['message'] = "Logged in successfully.";
-            $response['user'] = $user->getUserDetail();
+            $response['user'] = $user;
             $response['access_token'] = $tokenResult->accessToken;
             $response['token_type'] = 'Bearer';
             $response['expires_at'] = Carbon::parse(
@@ -87,7 +82,7 @@ class AuthController extends Controller
             )->toDateTimeString();
             return response()->json($response); 
         }else{
-            return response()->json(['message'=>trans('auth.failed')]); 
+             $response=array('status'=>false,'message'=>'User not found.');
         }
     }
 
