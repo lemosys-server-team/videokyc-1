@@ -532,7 +532,7 @@
 
 										<div class="ml-3 my-auto">
 
-											<h6>{{ $authUser->name }}</h6>
+											<h6>{{ $authUser->name }}</h6> 
 
 										</div>
 

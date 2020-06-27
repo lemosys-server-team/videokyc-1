@@ -25,16 +25,18 @@
                     <h6 class="m-0 font-weight-bold text-primary">{{ isset($schedule->id)?'Edit':'Add' }} Schedule</h6>
                 </div>
                 <div class="card-body">
-                    <div class="form-group {{$errors->has('sale_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                    <div class="form-group {{$errors->has('user_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
                         <label class="col-md-3 control-label" for="sale_id">Customer Name <span style="color:red">*</span></label>
-                        <div class="col-md-6">
-                            {!! Form::select('sale_id', $sales, old('sale_id', isset($schedule->sale_id)?$schedule->sale_id:''), ['data-error-container'=>'#sale_id_error', 'id'=>'sale_id', 'class' => 'select2 form-control', 'placeholder' => '-Select Customer-']) !!}
-                            <span id="sale_id_error"></span>
-                            @if($errors->has('sale_id'))
-                            <strong for="sale_id" class="help-block">{{ $errors->first('sale_id') }}</strong>
+                        
+                         <div class="col-md-6">
+                             {!! Form::select('user_id', $users, old('user_id', isset($schedule->user_id)?$schedule->user_id:''), ['id'=>'user_id', 'data-error-container'=>'#user_id_error', 'class' => 'form-control user_id', 'placeholder' => '-Select User-']) !!}
+                             <span id="user_id_error"></span>
+                            @if($errors->has('user_id'))
+                            <strong for="sale_id" class="help-block">{{ $errors->first('user_id') }}</strong>
                             @endif
-                        </div>
+                         </div>
                     </div>
+                    
                     <div class="form-group {{$errors->has('date') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
                         <label class="col-md-3 control-label" for="date">Date <span style="color:red">*</span></label>
                         <div class="col-md-6">
@@ -60,16 +62,17 @@
                             @endif
                         </div>
                     </div>
-                    <div class="form-group {{$errors->has('user_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                        <label class="col-md-3 control-label" for="user_id">User <span style="color:red">*</span></label>
-                         <div class="col-md-6">
-                             {!! Form::select('user_id', $users, old('user_id', isset($schedule->user_id)?$schedule->user_id:''), ['id'=>'user_id', 'data-error-container'=>'#user_id_error', 'class' => 'form-control user_id', 'placeholder' => '-Select User-']) !!}
-                             <span id="user_id_error"></span>
-                            @if($errors->has('user_id'))
-                            <strong for="sale_id" class="help-block">{{ $errors->first('user_id') }}</strong>
+                    <div class="form-group {{$errors->has('sale_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                       <label class="col-md-3 control-label" for="user_id">Sales <span style="color:red">*</span></label>
+                        <div class="col-md-6">
+                            {!! Form::select('sale_id', $sales, old('sale_id', isset($schedule->sale_id)?$schedule->sale_id:''), ['data-error-container'=>'#sale_id_error', 'id'=>'sale_id', 'class' => 'select2 form-control', 'placeholder' => '-Select Customer-']) !!}
+                            <span id="sale_id_error"></span>
+                            @if($errors->has('sale_id'))
+                            <strong for="sale_id" class="help-block">{{ $errors->first('sale_id') }}</strong>
                             @endif
-                         </div>
+                        </div>
                     </div>
+                    
                 </div>  
                 <div class="card-footer">
                     <button type="submit" class="btn btn-responsive btn-primary">{{ __('Submit') }}</button>
