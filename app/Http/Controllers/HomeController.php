@@ -28,7 +28,7 @@ class HomeController extends Controller
 
     public function register(Request $request){
 
-        $validatedData = $request->validate([
+        $rules = [
             'name'       => 'required', 
             'mobile_number'     => 'required|unique:'.with(new User)->getTable().',mobile_number',
             'email'      => 'required',
@@ -38,15 +38,19 @@ class HomeController extends Controller
             // 'address2'      =>'required',
             // 'date'        => 'required',
             // 'time'        => 'required',
-        ]);
-
-
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
             $data = $request->all();
-            User::create($data);
+            $data['password'] = Hash::make(123456);
+            $user = User::create($data);
+            //assign user roles
+            $user->assignRole(config('constants.ROLE_TYPE_USER_ID'));
+            $request->session()->flash('success',__('Registration Successfully.'));
             return redirect()->back();
-     
-          
-       
+        }else {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
     }
 
     /*
