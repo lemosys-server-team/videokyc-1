@@ -14,6 +14,10 @@
 		//Directories Path
 		'USERS_UPLOADS_PATH' => '/uploads/users/',
 		'SETTING_IMAGE_URL' => '/uploads/setting/',
+		'SCHEDULE_UPLOAD_PATH_SALES' => '/uploads/schedules/sales/',
+		'SCHEDULE_UPLOAD_PATH_USER' => '/uploads/schedules/users/',
+
+		
 
 		// Defaults
 		'NO_IMAGE_URL' =>'/images/no_image.png',
