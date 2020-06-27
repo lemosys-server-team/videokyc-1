@@ -32,8 +32,11 @@ Route::group(['namespace'=>'API'], function(){
 	Route::group([
 	  'middleware' => 'auth:api'
 	], function() {
-		// Write your routs here...
-	});
+		Route::post('getUserBySales', 'Webservices@getUserBySales');
+		Route::post('uploadDocumentByUser', 'Webservices@uploadDocumentByUser');
+		Route::post('uploadDocumentBysale', 'Webservices@uploadDocumentBysale');
+		
+    });
 
 	// APIs that can access without login
 	// Route::get('public', 'ControllerName@functionName');

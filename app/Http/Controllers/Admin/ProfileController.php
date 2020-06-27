@@ -63,7 +63,7 @@ class ProfileController extends Controller
             $file = $request->file('profile_picture');
             $profile_picture  = time() . 'profile_picture.' . $file->getClientOriginalExtension();
             $file->storeAs(config('constants.USERS_UPLOADS_PATH'), $profile_picture);
-
+           
             $old_profile_picture = isset($user->profile_picture)?$user->profile_picture:'';
             if (isset($old_profile_picture) && $old_profile_picture!='' && \Storage::exists(config('constants.USERS_UPLOADS_PATH').$old_profile_picture)) {
                 \Storage::delete(config('constants.USERS_UPLOADS_PATH').$old_profile_picture);

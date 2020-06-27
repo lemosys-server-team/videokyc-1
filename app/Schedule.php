@@ -13,7 +13,7 @@ class Schedule extends Model
      * @var array
      */
     protected $fillable = [
-        'sale_id','user_id','status','datetime'
+        'sale_id','user_id','status','datetime','image_photo','image_adhar','image_pen','ss01','ss02','ss03','duration'
     ];
 
     public function user(){
