@@ -69,7 +69,126 @@
 <script src="{{ asset('template/valex-theme/plugins/horizontal-menu/horizontal-menu-2/horizontal-menu.js') }}"></script>
 <!-- custom js -->
 <script src="{{ asset('template/valex-theme/js/custom.js') }}"></script>
-<script src="{{ asset('template/valex-theme/plugins/sidebar/sidebar.js') }}"></script>
-<script src="{{ asset('template/valex-theme/plugins/sidebar/sidebar-custom.js') }}"></script>
+<script type="text/javascript">
+
+$.ajaxSetup({
+
+    headers: {
+
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+
+    }
+
+});
+
+
+
+var formValidationOptions = {
+
+    errorElement: 'strong', //default input error message container
+
+    errorClass: 'help-block', // default input error message class
+
+    focusInvalid: true, // do not focus the last invalid input
+
+    ignore: "",
+
+    errorPlacement: function (error, element) { // render error placement for each input type
+
+        if (element.attr("data-error-container")) { 
+
+            error.appendTo(element.attr("data-error-container"));
+
+        }else{
+
+            error.insertAfter(element); // for other inputs, just perform default behavior
+
+        }
+
+    },
+
+    highlight: function (element) { // hightlight error inputs
+
+        jQuery(element)
+
+            .closest('.form-group').addClass('{{ config("constants.ERROR_FORM_GROUP_CLASS") }}').removeClass('has-success'); // set error class to the control group
+
+    },
+
+    unhighlight: function (element) { // revert the change done by hightlight
+
+        jQuery(element)
+
+            .closest('.form-group').removeClass('{{ config("constants.ERROR_FORM_GROUP_CLASS") }}'); // set error class to the control group
+
+    },
+
+    success: function (label) {
+
+        label
+
+        .closest('.form-group').removeClass('{{ config("constants.ERROR_FORM_GROUP_CLASS") }}'); // set success class to the control group
+
+    }
+
+};
+
+
+
+jQuery('.autoFillOff').attr('readonly', true);
+
+setTimeout(function(){
+
+    jQuery('.autoFillOff').attr('readonly', false)
+
+}, 1000);
+
+jQuery(document).ready(function(){
+
+    if(jQuery.validator)
+
+        jQuery.validator.setDefaults(formValidationOptions);
+
+
+
+    var url = window.location;
+
+    var element = $('ul#accordionSidebar a').filter(function() {
+
+        var href = this.href;
+
+        var a = href.indexOf("?");
+
+        var b =  href.substring(a);
+
+        var c = href.replace(b,"");
+
+        if(a == -1)
+
+            href = b;
+
+        else
+
+            href = c;
+
+
+
+        return href == url.href || url.href.indexOf(href) == 0;
+
+    }).addClass('active').closest('li');
+
+
+
+    if(element.is('li')){
+
+      element.addClass('active');
+
+      element.find('a').trigger('click');
+
+    }
+
+});
+
+</script>
 </body>
 </html>    

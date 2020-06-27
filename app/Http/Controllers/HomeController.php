@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\User;
+use Validator;
 
 class HomeController extends Controller
 {
@@ -22,6 +24,29 @@ class HomeController extends Controller
      */
     public function index(){
        return view('home');
+    }
+
+    public function register(Request $request){
+
+        $validatedData = $request->validate([
+            'name'       => 'required', 
+            'mobile_number'     => 'required|unique:'.with(new User)->getTable().',mobile_number',
+            'email'      => 'required',
+            // 'state_id'        => 'required',
+            // 'city_id'        => 'required',
+            // 'address1'      =>'required',
+            // 'address2'      =>'required',
+            // 'date'        => 'required',
+            // 'time'        => 'required',
+        ]);
+
+
+            $data = $request->all();
+            User::create($data);
+            return redirect()->back();
+     
+          
+       
     }
 
     /*
