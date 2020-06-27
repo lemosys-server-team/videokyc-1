@@ -12,7 +12,7 @@
   <div class="breadcrumb-header justify-content-between">
       <div class="left-content">
           <div>
-            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Users</h2>
+            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Sales</h2>
           </div>
       </div>
   </div>
@@ -20,12 +20,12 @@
     <div class="col-xl-12">
       <div class="card">
         <div class="card-header py-3 cstm_hdr">
-            <h6 class="m-0 font-weight-bold text-primary">Users List</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Sales List</h6>
             <a href="{{route('admin.users.create')}}" class="btn btn-sm btn-icon-split float-right btn-outline-warning">
                 <span class="icon text-white-50">
                   <i class="fas fa-plus"></i>
                 </span>
-                <span class="text">Add User</span>
+                <span class="text">Add Sales</span>
             </a>
            
         </div>

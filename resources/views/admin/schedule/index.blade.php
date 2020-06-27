@@ -148,10 +148,10 @@ function getSchedules(){
       ],
 
       columns: [
-          {data: 'sale.name', name: 'sale.name'},
           {data: 'user.name', name: 'user.name'},
-          {data: 'sale_email', name: 'sale_email'},
-          {data: 'sale_mobile', name: 'sale_mobile'},
+          {data: 'sale.name', name: 'sale.name'},
+          {data: 'user_email', name: 'user_email'},
+          {data: 'user_mobile', name: 'user_mobile'},
           {data: 'datetime', name: 'datetime'},
           {data: 'time', name: 'time'},
           {data: 'status', name: 'status'},
