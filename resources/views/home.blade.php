@@ -58,7 +58,7 @@
                         @endif
                           </div>
                           <div class="form-group {{$errors->has('mobile_number') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                          <input type="number" name="mobile_number" value="{{old('mobile_number')}}" class="form-control" id="mobile_number" placeholder="Enter your mobile">
+                          <input type="text" name="mobile_number" value="{{old('mobile_number')}}" class="form-control" id="mobile_number" placeholder="Enter your mobile">
                           @if($errors->has('mobile_number'))
                           <p class="help-block">
                               <strong>{{ $errors->first('mobile_number') }}</strong>
@@ -74,7 +74,7 @@
                         @endif
                           </div>
                           <div class="form-group {{$errors->has('address1') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                          <input type="text" name="address1" value="{{old('address1')}}"  class="form-control @error('address1') is-invalid @enderror" id="address1" placeholder="Enter your address" >
+                          <input type="text" name="address1" value="{{old('address1')}}"  class="form-control @error('address1') is-invalid @enderror" id="address1" placeholder="address 1" >
                           @if($errors->has('address1'))
                         <p class="help-block">
                             <strong>{{ $errors->first('address1') }}</strong>
@@ -82,7 +82,7 @@
                         @endif
                           </div>
                           <div class="form-group {{$errors->has('address2') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                          <input type="text" name="address2" value="{{old('address2')}}"  class="form-control @error('address2') is-invalid @enderror" id="address2" placeholder="Enter your address">
+                          <input type="text" name="address2" value="{{old('address2')}}"  class="form-control @error('address2') is-invalid @enderror" id="address2" placeholder="address 2">
                           @if($errors->has('address2'))
                         <p class="help-block">
                             <strong>{{ $errors->first('address2') }}</strong>
@@ -159,7 +159,8 @@ jQuery(document).ready(function(){
                 required: true
             },
             mobile_number: {
-                required: true            
+                required: true,
+                number: true         
             }, 
             email: {
                 required: true
