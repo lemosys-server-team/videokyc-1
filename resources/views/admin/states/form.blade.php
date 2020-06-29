@@ -6,7 +6,7 @@
     <div class="breadcrumb-header justify-content-between">
         <div class="left-content">
             <div>
-              <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Cities</h2>
+              <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">States</h2>
             </div>
         </div>
     </div>
@@ -14,38 +14,33 @@
         <div class="col-xl-12">
     <!-- Content Row -->
     <div class="card">
-        {!! Form::open(['method' => 'POST', 'route' => isset($city->id)?['admin.cities.update',$city->id]:['admin.cities.store'],'class' => 'form-horizontal','id' => 'frmCity', 'files' => true]) !!}
+        {!! Form::open(['method' => 'POST', 'route' => isset($state->id)?['admin.states.update',$state->id]:['admin.states.store'],'class' => 'form-horizontal','id' => 'frmState', 'files' => true]) !!}
         @csrf
-        @if(isset($city->id))
+        @if(isset($state->id))
         @method('PUT')
         @endif
         <div class="card-header py-3 cstm_hdr">
-            <h6 class="m-0 font-weight-bold text-primary">{{ isset($city->id)?'Edit':'Add' }} City</h6>
+            <h6 class="m-0 font-weight-bold text-primary">{{ isset($state->id)?'Edit':'Add' }} State</h6>
         </div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
                      <div class="col-md-12 form-group {{$errors->has('country_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
                         <label for="country_id">Country <span style="color:red">*</span></label>
-                        {!! Form::select('country_id', $countries, old('country_id', isset($city->country_id)?$city->country_id:''), ['id'=>'country_id', 'class' => 'form-control', 'placeholder' => 'Select Country']) !!}
+                       
+                        {!! Form::select('country_id', $countries, old('country_id', isset($state->country_id)?$state->country_id:''), ['id'=>'country_id', 'class' => 'form-control', 'placeholder' => 'Select Country']) !!}
+
                         @if($errors->has('country_id'))
                         <p class="help-block">
                             <strong>{{ $errors->first('country_id') }}</strong>
                         </p>
                         @endif                       
-                    </div>
-                    <div class="col-md-12 form-group {{$errors->has('state_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                        <label for="state_id">State <span style="color:red">*</span></label>
-                        {!! Form::select('state_id', $state, old('state_id', isset($city->state_id)?$city->state_id:''), ['id'=>'state_id', 'class' => 'form-control', 'placeholder' => 'Select State']) !!}
-                        @if($errors->has('state_id'))
-                        <p class="help-block">
-                            <strong>{{ $errors->first('country_id') }}</strong>
-                        </p>
-                        @endif                       
+
                     </div>
                     <div class="col-md-12 form-group {{$errors->has('title') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
                         <label for="title">Title <span style="color:red">*</span></label>
-                        {!! Form::text('title', old('title', isset($city->title)?$city->title:''), ['id'=>'title', 'class' => 'form-control', 'placeholder' => 'Title']) !!}
+                        {!! Form::text('title', old('title', isset($state->title)?$state->title:''), ['id'=>'title', 'class' => 'form-control', 'placeholder' => 'Title']) !!}
+
                         @if($errors->has('title'))
                         <p class="help-block">
                             <strong>{{ $errors->first('title') }}</strong>
@@ -93,7 +88,7 @@
         </div>  
         <div class="card-footer">
             <button type="submit" class="btn btn-primary">Submit</button>
-            <a href="{{route('admin.cities.index')}}"  class="btn btn-secondary">Cancel</a>
+            <a href="{{route('admin.states.index')}}"  class="btn btn-secondary">Cancel</a>
         </div>
         {!! Form::close() !!}
     </div>
@@ -105,15 +100,12 @@
 <script type="text/javascript" src="{{ asset('js/jquery-validation/dist/jquery.validate.min.js') }}"></script>
 <script type="text/javascript">
 jQuery(document).ready(function(){
-    jQuery('#frmCity').validate({
+    jQuery('#frmState').validate({
         rules: {
             country_id: {
                 required: true
             },
             title: {
-                required: true
-            },
-            state_id: {
                 required: true
             },
           /*  latitude:{
@@ -132,27 +124,5 @@ jQuery(document).ready(function(){
         }
     });
 });
-
-// get state
-$( "#country_id" ).change(function(){
-    var country_id = $(this).val();
-    if(country_id){
-        $.ajax({
-        type : "GET",
-        url :'{{route('admin.cities.getstates')}}',
-        data:{country_id:country_id},
-        success:function(res){
-        $("#state_id").empty();
-        $("#state_id").append('<option value="">Select State</option>');
-        $.each(res,function(key,value){
-        $("#state_id").append('<option value="'+key+'">'+value+'</option>');
-        });
-        }
-});
-}
-});
-
-
-
 </script>
 @endsection

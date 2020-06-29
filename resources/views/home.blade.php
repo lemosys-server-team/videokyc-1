@@ -1,5 +1,5 @@
 @extends('auth.valex_app')
-@section('styles')
+@section('frontend_styles')
 <link href="{{ asset('css/bootstrap-datepicker3.standalone.min.css') }}" rel="stylesheet">
 @endsection
 @section('content')
@@ -27,9 +27,7 @@
                       <a href="javascript:void(0)">
                       <img src="{{ \Storage::url(config('constants.SETTING_IMAGE_URL').$logo) }}" class="sign-favicon ht-40" alt="logo">
                       @endif
-
                      </a></div>
-                    
                   <div class="card-sigin">
                       <div class="main-signup-header">
                         <!-- <h2>Welcome back!</h2> -->
@@ -46,104 +44,85 @@
                                  {{ $flash }}
                             </div>
                         @endif
-                         {!! Form::open(['method' => 'POST', 'route' =>['register'],'class' => 'form-horizontal','id' => 'frmSchedules', 'files' => true]) !!}
-                @csrf
-                
+                         {!! Form::open(['method' => 'POST', 'route' =>['register'],'class' => 'form-horizontal','id' => 'frmregister']) !!}
+                        @csrf
                         <form action="{{ route('register') }}" method="POST" id="register">
                           @csrf
-                          <div class="form-group">
-                          <!-- <input type="hidden" value="1" name="role_id"> -->
-                          <input type="text" name="name" value="{{old('name')}}" id="name" class="form-control @error('name') is-invalid @enderror" placeholder="Enter your name">
-                            @error('name')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                          <div class="form-group {{$errors->has('name') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                          <!-- {!! Form::text('name', old('name'), ['id'=>'name', 'class' =>'form-control', 'placeholder' => 'Enter your name']) !!} -->
+                          <input type="text" name="name" value="{{old('name')}}" id="name" class="form-control" placeholder="Enter your name" >
+                          @if($errors->has('name'))
+                        <p class="help-block">
+                            <strong>{{ $errors->first('name') }}</strong>
+                        </p>
+                        @endif
+                          </div>
+                          <div class="form-group {{$errors->has('mobile_number') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                          <input type="text" name="mobile_number" value="{{old('mobile_number')}}" class="form-control" id="mobile_number" placeholder="Enter your mobile">
+                          @if($errors->has('mobile_number'))
+                          <p class="help-block">
+                              <strong>{{ $errors->first('mobile_number') }}</strong>
+                          </p>
+                          @endif
+                          </div>
+                          <div class="form-group {{$errors->has('email') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                          <input type="text" name="email" value="{{old('email')}}"  class="form-control @error('email') is-invalid @enderror" id="email" placeholder="Enter your email" >
+                          @if($errors->has('email'))
+                        <p class="help-block">
+                            <strong>{{ $errors->first('email') }}</strong>
+                        </p>
+                        @endif
+                          </div>
+                          <div class="form-group {{$errors->has('address1') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                          <input type="text" name="address1" value="{{old('address1')}}"  class="form-control @error('address1') is-invalid @enderror" id="address1" placeholder="address 1" >
+                          @if($errors->has('address1'))
+                        <p class="help-block">
+                            <strong>{{ $errors->first('address1') }}</strong>
+                        </p>
+                        @endif
+                          </div>
+                          <div class="form-group {{$errors->has('address2') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                          <input type="text" name="address2" value="{{old('address2')}}"  class="form-control @error('address2') is-invalid @enderror" id="address2" placeholder="address 2">
+                          @if($errors->has('address2'))
+                        <p class="help-block">
+                            <strong>{{ $errors->first('address2') }}</strong>
+                        </p>
+                        @endif
                           </div>
 
-                          <div class="form-group">
-                          <input type="text" name="mobile_number" value="{{old('mobile_number')}}" class="form-control @error('mobile_number') is-invalid @enderror" id="mobile" placeholder="Enter your mobile">
+                          <div class="form-group {{$errors->has('state_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                       {!! Form::select('state_id', $state, old('state_id', isset($state->state_id)?$state->state_id:''), ['id'=>'state_id', 'class' => 'form-control', 'placeholder' => '-Select State-']) !!}
 
-                            @error('mobile_number')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                       @if($errors->has('state_id'))
+                       <p class="help-block">
+                           <strong>{{ $errors->first('state_id') }}</strong>
+                       </p>
+                       @endif 
+                          </div>
+                          <div class="form-group {{$errors->has('city_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                          {!! Form::select('city_id', [], old('city_id', isset($city->city_id)?$city->city_id:''), ['id'=>'city_id', 'class' => 'form-control', 'placeholder' => '-Select City-']) !!}
+                            
+                            @if($errors->has('city_id'))
+                        <p class="help-block">
+                            <strong>{{ $errors->first('city_id') }}</strong>
+                        </p>
+                        @endif
+                          </div>
+                          <div class="form-group {{$errors->has('dates') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                            {!! Form::text('dates',old('dates'), ['id'=>'dates','readOnly'=>'readOnly' ,'class' => 'form-control datepicker', 'placeholder' => 'MM/DD/YYYY']) !!}                         
+                            @if($errors->has('dates'))
+                        <p class="help-block">
+                            <strong>{{ $errors->first('dates') }}</strong>
+                        </p>
+                        @endif
                           </div>
                           <div class="form-group">
-                          <input type="text" name="email" value="{{old('email')}}"  class="form-control @error('email') is-invalid @enderror" id="email" placeholder="Enter your email">
-
-                            @error('email')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                          </div>
-                          <div class="form-group">
-                          <input type="text" name="address1" value="{{old('address1')}}"  class="form-control @error('address1') is-invalid @enderror" id="address1" placeholder="Enter your address">
-                            @error('address1')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                          </div>
-
-                          <div class="form-group">
-                          <input type="text" name="address2" value="{{old('address2')}}"  class="form-control @error('address2') is-invalid @enderror" id="address2" placeholder="Enter your address">
-
-                            @error('address2')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                          </div>
-
-                          <div class="form-group">
-                          <select name="state_id" id="state" value="{{old('state_id')}}"  class="form-control @error('state_id') is-invalid @enderror" placeholder="Select state">
-                            <option value="">-Select-</option>
-                            <option value="1">Madhya Pradesh</option>
-                            <option value="1">Rajasthan</option>
-                            <option value="1">Maharashtra</option>
-                            </select>                            
-                            @error('state_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                          </div>
-
-                          <div class="form-group">
-                          <select name="city_id" id="city" value="{{old('city_id')}}"  class="form-control @error('city_id') is-invalid @enderror" placeholder="Select City">
-                          <option value="">-Select-</option>
-                            <option value="1">Indore</option>
-                            </select>                             
-                            @error('city_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                          </div>
-                          <div class="form-group">
-                          <?php $date=isset($schedule->datetime)?$schedule->datetime:date(config('constants.MYSQL_STORE_DATE_FORMAT'));
-                                $date=date(config('constants.SITE_DATE_FORMAT'),strtotime($date)); ?>
-                            {!! Form::text('dates',old('dates',$date), ['readOnly'=>'readOnly' ,'class' => 'form-control datepicker', 'placeholder' => 'MM/DD/YYYY']) !!}                         
-                            @error('date')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                          </div>
-                          <div class="form-group">
-                          <?php $time=isset($schedule->datetime)?$schedule->datetime:'';
-                                  if($time!=''){
-                                        $time=date('H:i',strtotime($time)); 
-                                } ?>
-                            {!! Form::time('time',old('time',$time), ['class' => 'form-control', 'placeholder' => 'Time']) !!}
-                          @error('time')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                            {!! Form::time('time',old('time'), ['class' => 'form-control', 'placeholder' => 'Time']) !!}
+                            @if($errors->has('time'))
+                        <p class="help-block">
+                            <strong>{{ $errors->first('time') }}</strong>
+                        </p>
+                        @endif
                           </div>
                          <button type="submit" class="btn btn-responsive btn-primary">{{ __('Submit') }}</button>
                           <!-- <button type="Submit" class="btn btn-main-primary btn-block">Submit</button> -->
@@ -159,45 +138,74 @@
       </div>
 </div>
 @endsection
-@section('scripts')
+<!-- custom script -->
+
+@section('frontend_script')
+<script type="text/javascript" src="{{ asset('js/jquery-validation/dist/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('js/datepicker/bootstrap-datepicker.min.js') }}"></script>
 
-<script type="text/javascript" src="{{ asset('js/jquery-validation/dist/jquery.validate.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('js/jquery-validation/dist/additional-methods.min.js') }}"></script>
+
 <script type="text/javascript">
+ $('.datepicker').datepicker({
+            format: 'mm/dd/yyyy',
+            orientation: 'bottom',
+            autoclose: true,
+    });
+
 jQuery(document).ready(function(){
-    jQuery('#frmSchedules').validate({
+    jQuery('#frmregister').validate({
         rules: {
             name: {
                 required: true
             },
-            mobile: {
-                required: true            
+            mobile_number: {
+                required: true,
+                number: true         
             }, 
             email: {
                 required: true
             }, 
-            date: {
+            dates: {
                 required: true
             },
             time: {
                 required: true
             }, 
-            state: {
+            state_id: {
                 required: true
             }, 
-            city: {
+            city_id: {
                 required: true
-            }, 
+            },
             address1: {
                 required: true
             }, 
             address2: {
                 required: true
-            }, 
-                
+            },      
         }
     });
 });
+// get city
+$( "#state_id" ).change(function(){
+    var state_id = $(this).val();
+    if(state_id){
+        $.ajax({
+        type : "GET",
+        url :'{{route('register.getstatetocity')}}',
+        data:{state_id:state_id},
+        success:function(res){
+        $("#city_id").empty();
+        $("#city_id").append('<option value="">Select City</option>');
+        $.each(res,function(key,value){
+        $("#city_id").append('<option value="'+key+'">'+value+'</option>');
+        });
+        }
+});
+}
+});
 </script>
+
 @endsection
+
+

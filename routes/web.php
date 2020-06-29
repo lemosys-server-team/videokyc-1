@@ -10,9 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 //Auth::routes(['verify' => false,'register' => false]);
-
 // Route::get('/{url?}', function(){
 // 	return redirect('register');
 // })->where(['url' => '|home'])->name('home');
@@ -21,6 +19,7 @@ if(env('API_URL')=="" || env('API_URL')==url('/')){
 	Auth::routes(['register'=>false]);
 	Route::get('index', 'HomeController@index')->name('index');
 	Route::post('register', 'HomeController@register')->name('register');
+	Route::get('register/getstatetocity', 'HomeController@getstatetocity')->name('register.getstatetocity');
 }
 
 Route::group(['middleware' => ['frontend']], function(){	
@@ -36,7 +35,14 @@ Route::group(['middleware' => ['auth']], function(){
 
 		Route::get('dashboard', 'DashboardController@index')->name('dashboard');
 		Route::resource('profile', 'ProfileController')->only(['index', 'store']);
-        Route::resource('settings', 'SettingsController')->only(['index', 'store']);
+		Route::resource('settings', 'SettingsController')->only(['index', 'store']);
+		
+
+		//states 
+		Route::resource('states','StateController');
+		Route::get('states/status/{id}', 'StateController@status')->name('states.status');
+		Route::post('states/list', 'StateController@getStates')->name('states.getStates');
+
 
 		// For Users
 		Route::resources([
@@ -65,7 +71,9 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::resource('cities', 'Cities')->except(['show']);
 		Route::post('cities/list', 'Cities@getCities')->name('cities.getCities');
 		Route::get('cities/status/{id}', 'Cities@status')->name('cities.status');
-		Route::get('cities/updateDLS/{id}', 'Cities@updateDLS')->name('cities.updateDLS');	
+		Route::get('cities/updateDLS/{id}', 'Cities@updateDLS')->name('cities.updateDLS');
+		Route::get('cities/getstates', 'Cities@getstate')->name('cities.getstates');
+	
 
 		Route::resource('components','ComponentController');
     	Route::get('components/destroy/{id}', 'ComponentController@destroy')->name('components.destroy');

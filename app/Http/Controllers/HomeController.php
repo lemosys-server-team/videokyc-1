@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use App\User;
+use App\Country;
+use App\State;
+use App\City;
 use Validator;
 
 class HomeController extends Controller
@@ -25,7 +28,11 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index(){
-       return view('home');
+        $state = State::where(['is_active'=>TRUE])->pluck('title', 'id');
+
+        $city=City::where(['is_active'=>TRUE])->pluck('title', 'id');
+
+       return view('home',compact('state','city'));
     }
 
     public function register(Request $request){
@@ -48,11 +55,16 @@ class HomeController extends Controller
             $user = User::create($data);
             //assign user roles
             $user->assignRole(config('constants.ROLE_TYPE_USER_ID'));
-            $request->session()->flash('success',__('Registration Successfully.'));
+            $request->session()->flash('success',__('Details submitted successfully'));
             return redirect()->back();
         }else {
             return redirect()->back()->withErrors($validator)->withInput();
         }
+    }
+
+    public function getstatetocity(Request $request){
+        $city = City::where('state_id',$request->state_id)->where(['is_active'=>TRUE])->pluck('title', 'id'); 
+        return response()->json($city);
     }
 
     /*
