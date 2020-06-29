@@ -13,7 +13,7 @@
   <div class="breadcrumb-header justify-content-between">
       <div class="left-content">
           <div>
-            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Cities</h2>
+            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">States</h2>
           </div>
       </div>
   </div>
@@ -21,30 +21,19 @@
     <div class="col-xl-12">
       <div class="card">
         <div class="card-header py-3 cstm_hdr">
-            <h6 class="m-0 font-weight-bold text-primary">Cities</h6>
-            <a href="{{route('admin.cities.create')}}" class="btn btn-sm btn-icon-split float-right btn-outline-warning">
+            <h6 class="m-0 font-weight-bold text-primary">States</h6>
+            <a href="{{route('admin.states.create')}}" class="btn btn-sm btn-icon-split float-right btn-outline-warning">
                 <span class="icon text-white-50">
                   <i class="fas fa-plus"></i>
                 </span>
-                <span class="text">Add City</span>
+                <span class="text">Add State</span>
             </a>
         </div>
         <div class="card-body">
-             <div class="well mb-3">
-                {!! Form::open(['method' => 'POST', 'class' => 'form-inline', 'id' => 'frmFilter']) !!}
-                <div class="form-group mr-sm-2 mb-2">
-                    {!! Form::select('country_id', $countries, old('country_id', isset($city->country_id)?$city->country_id:''), ['id'=>'country_id', 'class' => 'form-control', 'placeholder' => 'Select Country']) !!}                   
-                </div>   
-
-                <button type="submit" class="btn btn-responsive btn-primary mr-sm-2 mb-2">{{ __('Filter') }}</button>
-                <a href="javascript:;" onclick="resetFilter();" class="btn btn-responsive btn-danger mb-2">{{ __('Reset') }}</a>
-                {!! Form::close() !!}
-            </div> 
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0" id="cities">
                     <thead>
                         <tr>
-                           <th>City Name</th>
                            <th>State Name</th> 
                             <th>Country Name</th>  
                             <!-- <th>Latitude</th>
@@ -57,8 +46,7 @@
                     </thead>
                     <tfoot>
                         <tr>
-                           <th>City Name</th>
-                           <th>State Name</th> 
+                           <th>City Name</th> 
                             <th>Country Name</th>  
                             <!-- <th>Latitude</th>
                             <th>Longitude</th>
@@ -110,7 +98,7 @@
             serverSide: true,
             iDisplayLength:50,
             ajax: {
-                url: '{{ route('admin.cities.getCities') }}',
+                url: '{{ route('admin.states.getStates') }}',
                 method: 'POST',
                 data: {  
                  country_id: country_id   
@@ -121,8 +109,7 @@
                 [10, 25, 50,100,"All"]
             ],
             columns: [              
-                {data: 'title', name: 'title'},
-                {data: 'state.title', name: 'state.title'},
+                {data: 'title', name: 'title'}, 
                 {data: 'country.title', name: 'country.title'},
               /*  {data: 'latitude', name: 'latitude'},
                 {data: 'longitude', name: 'longitude'},

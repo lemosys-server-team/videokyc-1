@@ -12,7 +12,7 @@ class City extends Model
      * @var array
     */
     protected $fillable = [
-        'country_id','title','latitude','longitude','timezone','is_daylight_saving','is_active'
+        'country_id','state_id','title','latitude','longitude','timezone','is_daylight_saving','is_active'
     ];    
 
     // For default settings
@@ -30,6 +30,10 @@ class City extends Model
      */
     public function country(){         
         return $this->belongsTo(Country::class);
+    }
+
+    public function state(){         
+        return $this->belongsTo(State::class);
     }
     
 }

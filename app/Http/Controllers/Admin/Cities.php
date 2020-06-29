@@ -8,6 +8,7 @@ use DataTables;
 use Form;
 use App\City;
 use App\Country;
+use App\State;
 
 class Cities extends Controller
 {
@@ -18,7 +19,8 @@ class Cities extends Controller
      */
 
     public function index()
-    {   $countries = Country::where('id', '!=', config('constants.COUNTRY_OTHER_ID'))->where(['is_active'=>TRUE])->pluck('title', 'id');
+    {  
+         $countries = Country::where('id', '!=', config('constants.COUNTRY_OTHER_ID'))->where(['is_active'=>TRUE])->pluck('title', 'id');
         return view('admin.cities.index',compact('countries'));
     }
 
@@ -28,7 +30,7 @@ class Cities extends Controller
      * @return \Illuminate\Http\Response
      */
     public function getCities(Request $request){
-        $cities = City::with('country')->where('id', '!=', config('constants.CITY_OTHER_ID'))->groupBy('id')->get(); 
+        $cities = City::with('country','state')->where('id', '!=', config('constants.CITY_OTHER_ID'))->groupBy('id')->get(); 
         //$cities->->select([\DB::raw(with(new City)->getTable().'.*')]);
         
         $country_id = intval($request->input('country_id'));
@@ -79,8 +81,10 @@ class Cities extends Controller
     public function create()
     {
         $countries = Country::where('id', '!=', config('constants.COUNTRY_OTHER_ID'))->where(['is_active'=>TRUE])->pluck('title', 'id');
+        $state = State::where(['is_active'=>TRUE])->pluck('title', 'id');
+
         $timezones=array();          
-        return view('admin.cities.form',compact('countries','timezones'));
+        return view('admin.cities.form',compact('countries','timezones','state'));
     }
 
     /**
@@ -91,6 +95,7 @@ class Cities extends Controller
      */
     public function store(Request $request)
     {
+       
         $rules = [
             'country_id'=>'required',
             'title'=>'required|unique:'.with(new City)->getTable(), 
@@ -118,9 +123,10 @@ class Cities extends Controller
      */
     public function edit(City $city)
     {   
-        $countries = Country::where(['is_active'=>TRUE])->pluck('title', 'id'); 
+        $countries = Country::where(['is_active'=>TRUE])->pluck('title', 'id');
+        $state = state::where(['is_active'=>TRUE])->pluck('title', 'id');
         $timezones=array();    
-        return view('admin.cities.form',compact('countries','city','timezones'));
+        return view('admin.cities.form',compact('countries','city','timezones','state'));
     }
 
     /**
@@ -133,7 +139,8 @@ class Cities extends Controller
     public function update(Request $request, City $city)
     {
         $rules = [      
-            'country_id'=>'required',      
+            'country_id'=>'required',
+            'state_id'=>'required',    
             'title'=>'required|unique:'.with(new City)->getTable().',title,'.$city->getKey(),
             /*'latitude'=>'required|numeric|between:-90,90',
             'longitude'=>'required|numeric|between:-180,180',            
@@ -166,6 +173,13 @@ class Cities extends Controller
         }
         return redirect()->route('admin.cities.index');
     }
+
+
+    public function getstate(Request $request){
+        $states = State::where('country_id',$request->country_id)->where(['is_active'=>TRUE])->pluck('title', 'id'); 
+        return response()->json($states);
+    }
+   
 
     /**
      * Change status the specified resource from storage.
