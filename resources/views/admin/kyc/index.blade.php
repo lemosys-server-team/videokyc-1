@@ -36,19 +36,23 @@
                             <?php if(Auth::user()->roles->first()->id == config('constants.ROLE_TYPE_SUPERADMIN_ID')){   ?>
                             <div class="form-group mr-sm-2 mb-2">
                                 {!! Form::select('sales_id', $sales, old('sales_id'), ['id'=>'sales_id', 'class' => 'form-control', 'placeholder' => '-Select Sales-']) !!}                   
+                            </div>
+                            <div class="form-group mr-sm-2 mb-2">
+                                {!! Form::select('user_id', $users, old('user_id'), ['id'=>'user_id', 'class' => 'form-control', 'placeholder' => '-Select Customer-']) !!}                   
                             </div> 
+
                             <?php } ?>   
                             <div class="form-group mr-sm-2 mb-2">
                                   {!! Form::text('date', old('date', isset($market->date)?$market->date:''), ['id'=>'date', 'class' => 'form-control datepicker', 'placeholder' => 'MM/DD/YYYY','readOnly'=>'readOnly' ]) !!}                  
                             </div>  
-                            <div class="form-group mr-sm-2 mb-2">
+                           <!--  <div class="form-group mr-sm-2 mb-2">
                                 <select name="status" id="status" class="form-control">
                                     <option value="">-Select Status-</option>
                                     <option value="{{ config('constants.PENDING') }}">{{ ucwords(config('constants.PENDING')) }}</option>
                                     <option value="{{ config('constants.COMPLETED') }}">{{ ucwords(config('constants.COMPLETED')) }}</option>
                                     <option value="{{ config('constants.FAILED') }}">{{ ucwords(config('constants.FAILED')) }}</option>
                                 </select>                
-                            </div>  
+                            </div> -->  
                             <button type="submit" class="btn btn-responsive btn-primary mr-sm-2 mb-2">{{ __('Filter') }}</button>
                             <a href="javascript:;" onclick="resetFilter();" class="btn btn-responsive btn-danger mb-2">{{ __('Reset') }}</a>
                             {!! Form::close() !!}
@@ -61,7 +65,7 @@
                           <th>Assigned to User</th>
                           <th>Date</th>
                           <th>Aadhar</th>
-                          <th>Pen</th>
+                          <th>Pan</th>
                           <th>Photo</th>
                           <th>SS01</th>
                           <th>SS02</th>
@@ -76,7 +80,7 @@
                           <th>Assigned to User</th>
                           <th>Date</th>
                           <th>Aadhar</th>
-                          <th>Pen</th>
+                          <th>Pan</th>
                           <th>Photo</th>
                           <th>SS01</th>
                           <th>SS02</th>
@@ -144,7 +148,7 @@ function getkyc(){
           data: {  
               sales_id:sales_id,
               date:date,
-              status:status
+              user_id:user_id
               }
       },
       lengthMenu: [

@@ -21,13 +21,20 @@ class Kyc extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){  
-    	$sales=User::with('roles')
+      $sales=User::with('roles')
           ->whereHas('roles', function($query){
             $query->where('id',config('constants.ROLE_TYPE_SALES_ID'));
           })
           ->where('is_active',true)
           ->pluck('name','id');
-        return view('admin/kyc/index',compact('sales'));
+
+        $users=User::with('roles')
+          ->whereHas('roles', function($query){
+            $query->where('id',config('constants.ROLE_TYPE_USER_ID'));
+          })
+          ->where('is_active',true)
+          ->pluck('name','id');
+        return view('admin/kyc/index',compact('sales','users'));
     }
 
     /**
@@ -43,9 +50,9 @@ class Kyc extends Controller
         if($sale_id > 0) 
             $schedules->where('sale_id', $sale_id); 
            
-        $status = $request->input('status');
-        if($status !='') 
-            $schedules->where('status', $status); 
+        $user_id = intval($request->input('user_id'));
+        if($user_id > 0) 
+            $schedules->where('user_id', $user_id); 
 
         $date = $request->input('date');
         if($date!=''){
@@ -57,41 +64,41 @@ class Kyc extends Controller
        
             ->editColumn('datetime', function($schedule){
                 return date(config('constants.DATE_FORMAT').' @ '.config('constants.TIME_FORMAT') , strtotime($schedule->datetime));
-            })  
-            ->editColumn('final_status', function ($schedule) {
-            	$final_status=isset($schedule->final_status)?$schedule->final_status:'';
-                return ucwords($final_status);
-            })
+            })            
             ->editColumn('status', function ($schedule) {
-               return ucwords($schedule->status);
+               return ucwords($schedule->final_status);
+            })
+            ->editColumn('final_status', function ($schedule) {
+               return 'Xml file save in backend';
             })
             ->editColumn('image_pen', function ($schedule) {
                 if (isset($schedule->image_pen) && $schedule->image_pen!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_pen)) {
-                     return '<img width="100px" src="'.config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_pen.'" />';
+                     return '<img width="100px"  height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_pen).'" />';
                 }
                 return '';
             })
+
             ->editColumn('image_photo', function ($schedule) {
                 if (isset($schedule->image_photo) && $schedule->image_photo!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_photo)) {
-                     return '<img width="100px" src="'.config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_pen.'" />';
+                     return '<img width="100px"  height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_photo).'" />';
                 }
                 return '';
             })
             ->editColumn('ss01', function ($schedule) {
                 if (isset($schedule->ss01) && $schedule->ss01!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss01)) {
-                     return '<img width="100px" src="'.config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss01.'" />';
+                     return '<img width="100px" height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss01).'" />';
                 }
                 return '';
             })
             ->editColumn('ss02', function ($schedule) {
                 if (isset($schedule->ss02) && $schedule->ss02!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss02)) {
-                     return '<img width="100px" src="'.config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss02.'" />';
+                     return '<img width="100px" height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss02).'" />';
                 }
                 return '';
             })
             ->editColumn('ss03', function ($schedule) {
                 if (isset($schedule->ss03) && $schedule->ss03!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss03)) {
-                     return '<img width="100px" src="'.config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss03.'" />';
+                     return '<img width="100px" height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss03).'" />';
                 }
                 return '';
             })
