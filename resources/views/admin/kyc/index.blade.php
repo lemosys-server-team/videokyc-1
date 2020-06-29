@@ -134,7 +134,7 @@ function resetFilter(){
 function getkyc(){
   var sales_id = jQuery('#frmFilter [name=sales_id]').val(); 
   var date = jQuery('#frmFilter [name=date]').val(); 
-  var status = jQuery('#frmFilter [name=status]').val();  
+  var user_id = jQuery('#frmFilter [name=user_id]').val();  
   jQuery('#schedules').dataTable().fnDestroy();
   jQuery('#schedules tbody').empty();
   jQuery('#schedules').DataTable({
