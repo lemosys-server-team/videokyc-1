@@ -77,6 +77,9 @@ Route::group(['middleware' => ['auth']], function(){
     	Route::post('schedules/getSchedules', 'Schedules@getSchedules')->name('schedules.getSchedules');
     	Route::get('schedules/status/{id}', 'Schedules@status')->name('schedules.status');
 
+        Route::resource('kyc','Kyc');
+        Route::post('kyc/getkyc', 'Kyc@getkyc')->name('kyc.getkyc');
+    
 	});
 
 });
