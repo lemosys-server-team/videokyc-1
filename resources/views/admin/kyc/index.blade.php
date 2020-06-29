@@ -156,7 +156,7 @@ function getkyc(){
           {data: 'user.name', name: 'user.name'},
           {data: 'sale.name', name: 'sale.name'},
           {data: 'datetime', name: 'datetime'},
-          {data: 'image_adhar', name: 'image_adhar'},
+          {data: 'final_status', name: 'final_status'},
           {data: 'image_pen', name: 'image_pen'},
           {data: 'image_photo', name: 'image_photo'},
           {data: 'ss01', name: 'ss01'},
