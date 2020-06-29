@@ -172,9 +172,6 @@ $.ajaxSetup({
     }
 
 });
-
-
-
 var formValidationOptions = {
 
     errorElement: 'strong', //default input error message container

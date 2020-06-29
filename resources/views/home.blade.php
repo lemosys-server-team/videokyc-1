@@ -1,9 +1,7 @@
 @extends('auth.valex_app')
-@section('styles')
-<link href="{{asset('template/valex-theme/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+@section('frontend_styles')
 <link href="{{ asset('css/bootstrap-datepicker3.standalone.min.css') }}" rel="stylesheet">
 @endsection
-
 @section('content')
 <div class="container-fluid">
       <div class="row no-gutter">
@@ -48,30 +46,27 @@
                         @endif
                          {!! Form::open(['method' => 'POST', 'route' =>['register'],'class' => 'form-horizontal','id' => 'frmregister']) !!}
                         @csrf
-                
                         <form action="{{ route('register') }}" method="POST" id="register">
                           @csrf
                           <div class="form-group {{$errors->has('name') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                          <input type="text" name="name" value="{{old('name')}}" id="name" class="form-control @error('name') is-invalid @enderror" placeholder="Enter your name" required>
+                          <!-- {!! Form::text('name', old('name'), ['id'=>'name', 'class' =>'form-control', 'placeholder' => 'Enter your name']) !!} -->
+                          <input type="text" name="name" value="{{old('name')}}" id="name" class="form-control" placeholder="Enter your name" >
                           @if($errors->has('name'))
                         <p class="help-block">
                             <strong>{{ $errors->first('name') }}</strong>
                         </p>
                         @endif
                           </div>
-
                           <div class="form-group {{$errors->has('mobile_number') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                          <input type="text" name="mobile_number" value="{{old('mobile_number')}}" class="form-control @error('mobile_number') is-invalid @enderror" id="mobile" placeholder="Enter your mobile" required>
-
+                          <input type="number" name="mobile_number" value="{{old('mobile_number')}}" class="form-control" id="mobile_number" placeholder="Enter your mobile">
                           @if($errors->has('mobile_number'))
-                        <p class="help-block">
-                            <strong>{{ $errors->first('mobile_number') }}</strong>
-                        </p>
-                        @endif
+                          <p class="help-block">
+                              <strong>{{ $errors->first('mobile_number') }}</strong>
+                          </p>
+                          @endif
                           </div>
                           <div class="form-group {{$errors->has('email') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                          <input type="text" name="email" value="{{old('email')}}"  class="form-control @error('email') is-invalid @enderror" id="email" placeholder="Enter your email" required>
-
+                          <input type="text" name="email" value="{{old('email')}}"  class="form-control @error('email') is-invalid @enderror" id="email" placeholder="Enter your email" >
                           @if($errors->has('email'))
                         <p class="help-block">
                             <strong>{{ $errors->first('email') }}</strong>
@@ -79,7 +74,7 @@
                         @endif
                           </div>
                           <div class="form-group {{$errors->has('address1') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                          <input type="text" name="address1" value="{{old('address1')}}"  class="form-control @error('address1') is-invalid @enderror" id="address1" placeholder="Enter your address" required>
+                          <input type="text" name="address1" value="{{old('address1')}}"  class="form-control @error('address1') is-invalid @enderror" id="address1" placeholder="Enter your address" >
                           @if($errors->has('address1'))
                         <p class="help-block">
                             <strong>{{ $errors->first('address1') }}</strong>
@@ -87,7 +82,7 @@
                         @endif
                           </div>
                           <div class="form-group {{$errors->has('address2') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                          <input type="text" name="address2" value="{{old('address2')}}"  class="form-control @error('address2') is-invalid @enderror" id="address2" placeholder="Enter your address" required>
+                          <input type="text" name="address2" value="{{old('address2')}}"  class="form-control @error('address2') is-invalid @enderror" id="address2" placeholder="Enter your address">
                           @if($errors->has('address2'))
                         <p class="help-block">
                             <strong>{{ $errors->first('address2') }}</strong>
@@ -96,7 +91,7 @@
                           </div>
 
                           <div class="form-group {{$errors->has('state_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                       {!! Form::select('state_id', $state, old('state_id', isset($state->state_id)?$state->state_id:''), ['id'=>'state', 'class' => 'form-control', 'placeholder' => '-Select State-']) !!}
+                       {!! Form::select('state_id', $state, old('state_id', isset($state->state_id)?$state->state_id:''), ['id'=>'state_id', 'class' => 'form-control', 'placeholder' => '-Select State-']) !!}
 
                        @if($errors->has('state_id'))
                        <p class="help-block">
@@ -104,9 +99,8 @@
                        </p>
                        @endif 
                           </div>
-
                           <div class="form-group {{$errors->has('city_id') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                          {!! Form::select('city_id', [], old('city_id', isset($city->city_id)?$city->city_id:''), ['id'=>'city', 'class' => 'form-control', 'placeholder' => '-Select City-']) !!}
+                          {!! Form::select('city_id', [], old('city_id', isset($city->city_id)?$city->city_id:''), ['id'=>'city_id', 'class' => 'form-control', 'placeholder' => '-Select City-']) !!}
                             
                             @if($errors->has('city_id'))
                         <p class="help-block">
@@ -115,7 +109,7 @@
                         @endif
                           </div>
                           <div class="form-group {{$errors->has('dates') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                            {!! Form::text('dates',old('dates'), ['readOnly'=>'readOnly' ,'class' => 'form-control datepicker', 'placeholder' => 'MM/DD/YYYY']) !!}                         
+                            {!! Form::text('dates',old('dates'), ['id'=>'dates','readOnly'=>'readOnly' ,'class' => 'form-control datepicker', 'placeholder' => 'MM/DD/YYYY']) !!}                         
                             @if($errors->has('dates'))
                         <p class="help-block">
                             <strong>{{ $errors->first('dates') }}</strong>
@@ -144,19 +138,19 @@
       </div>
 </div>
 @endsection
-@section('scripts')
-<script src="{{ asset('js/datepicker/bootstrap-datepicker.min.js') }}"></script>
+<!-- custom script -->
+
+@section('frontend_script')
 <script type="text/javascript" src="{{ asset('js/jquery-validation/dist/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('js/datepicker/bootstrap-datepicker.min.js') }}"></script>
+
 
 <script type="text/javascript">
  $('.datepicker').datepicker({
             format: 'mm/dd/yyyy',
             orientation: 'bottom',
-            autoclose: true
+            autoclose: true,
     });
-
-
 
 jQuery(document).ready(function(){
     jQuery('#frmregister').validate({
@@ -164,38 +158,35 @@ jQuery(document).ready(function(){
             name: {
                 required: true
             },
-            mobile: {
+            mobile_number: {
                 required: true            
             }, 
             email: {
                 required: true
             }, 
-            date: {
+            dates: {
                 required: true
             },
             time: {
                 required: true
             }, 
-            state: {
+            state_id: {
                 required: true
             }, 
-            city: {
+            city_id: {
                 required: true
-            }, 
+            },
             address1: {
                 required: true
             }, 
             address2: {
                 required: true
-            }, 
-                
+            },      
         }
     });
 });
-
 // get city
-$( "#state" ).change(function(){
-  alert('hello');
+$( "#state_id" ).change(function(){
     var state_id = $(this).val();
     if(state_id){
         $.ajax({
@@ -203,19 +194,17 @@ $( "#state" ).change(function(){
         url :'{{route('register.getstatetocity')}}',
         data:{state_id:state_id},
         success:function(res){
-        $("#city").empty();
-        $("#city").append('<option value="">Select City</option>');
+        $("#city_id").empty();
+        $("#city_id").append('<option value="">Select City</option>');
         $.each(res,function(key,value){
-        $("#city").append('<option value="'+key+'">'+value+'</option>');
+        $("#city_id").append('<option value="'+key+'">'+value+'</option>');
         });
         }
 });
 }
 });
-
-
-
-
-
 </script>
+
 @endsection
+
+
