@@ -57,12 +57,13 @@ class Kyc extends Controller
        
             ->editColumn('datetime', function($schedule){
                 return date(config('constants.DATE_FORMAT').' @ '.config('constants.TIME_FORMAT') , strtotime($schedule->datetime));
-            })            
+            })  
+            ->editColumn('final_status', function ($schedule) {
+            	$final_status=isset($schedule->final_status)?$schedule->final_status:'';
+                return ucwords($final_status);
+            })
             ->editColumn('status', function ($schedule) {
                return ucwords($schedule->status);
-            })
-            ->editColumn('image_adhar', function ($schedule) {
-               return 'Success';
             })
             ->editColumn('image_pen', function ($schedule) {
                 if (isset($schedule->image_pen) && $schedule->image_pen!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_pen)) {
