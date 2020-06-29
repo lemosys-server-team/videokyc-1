@@ -11,8 +11,6 @@
 |
 */
 
-
-
 //Auth::routes(['verify' => false,'register' => false]);
 
 // Route::get('/{url?}', function(){
@@ -79,6 +77,9 @@ Route::group(['middleware' => ['auth']], function(){
 
         Route::resource('kyc','Kyc');
         Route::post('kyc/getkyc', 'Kyc@getkyc')->name('kyc.getkyc');
+        Route::get('twilio', 'Kyc@twilio')->name('kyc.twilio');
+
+        
     
 	});
 

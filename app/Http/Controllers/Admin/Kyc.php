@@ -12,6 +12,9 @@ use DataTables;
 use Config;
 use Form;
 use DB;
+use Twilio\Jwt\AccessToken;
+use Twilio\Jwt\Grants\VideoGrant;
+use Twilio\Rest\Client;
 
 class Kyc extends Controller
 {
@@ -20,6 +23,44 @@ class Kyc extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function Twilio(Request $request){  
+        // Substitute your Twilio Account SID and API Key details
+        $accountSid = 'AC9c4946e7297ef20525589bab03294be4';
+        $apiKeySid = 'SKa8a7db735ddf5d477ef4867c6ca2267a';
+        $apiKeySecret = 'aebb8224f7289ec05db50d61addbb83c';
+
+        $identity = uniqid();
+       
+        // Create an Access Token
+        $token = new AccessToken(
+            $accountSid,
+            $apiKeySid,
+            $apiKeySecret,
+            3600,
+            $identity
+        );
+
+        //Grant access to Video
+        $grant = new VideoGrant();
+        $grant->setRoom('cool room');
+        $token->addGrant($grant);
+
+
+       /*n$ssid    = "AC9c4946e7297ef20525589bab03294be4";
+        $tosken  = "aebb8224f7289ec05db50d61addbb83c";
+
+        $twilio = new Client($ssid,  $tosken);
+        $room = $twilio->video->v1->rooms("DailyStandup")->fetch();
+        echo "<pre>";
+        print_r($room);die;*/
+
+        print_r($token->toJWT());die;
+
+        // Serialize the token as a JWT
+        echo $token->toJWT();
+    }
+
     public function index(Request $request){  
       $sales=User::with('roles')
           ->whereHas('roles', function($query){

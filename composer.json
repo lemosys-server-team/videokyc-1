@@ -20,6 +20,7 @@
         "paquettg/php-html-parser": "^2.0",
         "spatie/laravel-medialibrary": "^7.19",
         "spatie/laravel-permission": "^3.3.0",
+        "twilio/sdk": "^6.8",
         "yajra/laravel-datatables": "^1.5"
     },
     "require-dev": {
