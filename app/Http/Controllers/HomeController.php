@@ -29,10 +29,8 @@ class HomeController extends Controller
      */
     public function index(){
         $state = State::where(['is_active'=>TRUE])->pluck('title', 'id');
-
         $city=City::where(['is_active'=>TRUE])->pluck('title', 'id');
-
-       return view('home',compact('state','city'));
+        return view('auth.register',compact('state','city'));
     }
 
     public function register(Request $request){
