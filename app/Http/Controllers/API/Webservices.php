@@ -72,14 +72,14 @@ class Webservices extends Controller
     */
     public function uploadDocumentByUser(Request $request){
 
-        $rules =   ['schedule_id' => 'required',
-                   /* 'user_id' => 'required',*/
-                   'image_pen'=>['required',
+        $rules =   ['schedule_date' => 'required',
+                    'user_id' => 'required',
+                    'final_status' => 'required',
+                    'image_pen'=>['required',
                               'file',
                               'image'],
                     'image_adhar'=>['required',
-                            'file',
-                            'image'],
+                            'file'],
                     'image_photo'=>['required',
                             'file',
                             'image']
@@ -91,10 +91,9 @@ class Webservices extends Controller
             return response()->json(['status'=>false,'message'=>$validator->errors()->first()]);
         }    
         $data=$request->all();  
-        $schedule = Schedule::where('id',$data['schedule_id'])->first();
-
+        $date=date('Y-m-d',strtotime($data['schedule_date']));
+        $schedule = Schedule::where('user_id',$data['user_id'])->whereDate('datetime', '=', $date)->first();
         if(isset($schedule)){ 
-
             if ($request->hasFile('image_pen')){
                 $file = $request->file('image_pen');
                 $image_pen  = time().$schedule->id. 'image_pen.' . $file->getClientOriginalExtension();
@@ -134,7 +133,7 @@ class Webservices extends Controller
 
             $response=array('status'=>true,'message'=>'Document uploaded Successfully.');
         }else{
-            $response=array('status'=>false,'message'=>'Document uploaded failed.');
+            $response=array('status'=>false,'message'=>'User schedule not found.');
         }
         return response()->json($response);
     }

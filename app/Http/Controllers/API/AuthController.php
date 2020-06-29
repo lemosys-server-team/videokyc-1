@@ -83,6 +83,7 @@ class AuthController extends Controller
             return response()->json($response); 
         }else{
              $response=array('status'=>false,'message'=>'User not found.');
+             return response()->json($response);
         }
     }
 
