@@ -65,14 +65,14 @@
                           </div>
                           <button class="btn btn-main-primary btn-block">Sign In</button>
                         </form>
-                        <div class="main-signin-footer mt-5">
+                       <!--  <div class="main-signin-footer mt-5">
                           @if (Route::has('password.request'))
                           <p><a href="{{ route('password.request') }}">Forgot password?</a></p>
                           @endif
                           @if (Route::has('register'))
                           <p>Don't have an account? <a href="{{ route('register') }}">Create an Account</a></p>
                           @endif
-                        </div>
+                        </div> -->
                       </div>
                     </div>
                   </div>
