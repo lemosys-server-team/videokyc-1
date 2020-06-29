@@ -133,7 +133,7 @@ class Webservices extends Controller
 
             $response=array('status'=>true,'message'=>'Document uploaded Successfully.');
         }else{
-            $response=array('status'=>false,'message'=>'Document uploaded failed.');
+            $response=array('status'=>false,'message'=>'User schedule not found.');
         }
         return response()->json($response);
     }
