@@ -62,10 +62,10 @@ class Schedules extends Controller
                return ucwords($schedule->status);
             })
             ->addColumn('user_email', function($schedule){
-                return isset($schedule->user->email)?$schedule->sale->email:'';
+                return isset($schedule->user->email)?$schedule->user->email:'';
             })
             ->addColumn('user_mobile', function($schedule){
-                return isset($schedule->user->mobile_number)?$schedule->sale->mobile_number:'';
+                return isset($schedule->user->mobile_number)?$schedule->user->mobile_number:'';
             })
             ->addColumn('time', function($schedule){
                  return date(config('constants.TIME_FORMAT'), strtotime($schedule->datetime));

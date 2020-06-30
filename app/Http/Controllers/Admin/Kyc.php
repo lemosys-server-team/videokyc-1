@@ -24,43 +24,6 @@ class Kyc extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function Twilio(Request $request){  
-        // Substitute your Twilio Account SID and API Key details
-        $accountSid = 'AC9c4946e7297ef20525589bab03294be4';
-        $apiKeySid = 'SKa8a7db735ddf5d477ef4867c6ca2267a';
-        $apiKeySecret = 'aebb8224f7289ec05db50d61addbb83c';
-
-        $identity = uniqid();
-       
-        // Create an Access Token
-        $token = new AccessToken(
-            $accountSid,
-            $apiKeySid,
-            $apiKeySecret,
-            3600,
-            $identity
-        );
-
-        //Grant access to Video
-        $grant = new VideoGrant();
-        $grant->setRoom('cool room');
-        $token->addGrant($grant);
-
-
-       /*n$ssid    = "AC9c4946e7297ef20525589bab03294be4";
-        $tosken  = "aebb8224f7289ec05db50d61addbb83c";
-
-        $twilio = new Client($ssid,  $tosken);
-        $room = $twilio->video->v1->rooms("DailyStandup")->fetch();
-        echo "<pre>";
-        print_r($room);die;*/
-
-        print_r($token->toJWT());die;
-
-        // Serialize the token as a JWT
-        echo $token->toJWT();
-    }
-
     public function index(Request $request){  
       $sales=User::with('roles')
           ->whereHas('roles', function($query){
@@ -146,9 +109,21 @@ class Kyc extends Controller
             ->addColumn('action', function ($schedule) {
                 return
                     // edit
-                    '<a href="'.route('admin.schedules.show',[$schedule->id]).'" class="btn btn-success btn-circle btn-sm"><i class="fa fa-eye"></i></a>';
+                    '<a href="'.route('admin.kyc.show',[$schedule->id]).'" class="btn btn-success btn-circle btn-sm"><i class="fa fa-eye"></i></a>';
             })
             ->rawColumns(['image_pen','action','image_photo','ss01','ss02','ss03'])
             ->make(true);
+    }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($schedule_id){
+      $schedule = Schedule::with('user','sale')->where('id',$schedule_id)->first();
+      return view('admin.kyc.show', compact('schedule'));
     }
 }

@@ -35,6 +35,8 @@ Route::group(['namespace'=>'API'], function(){
 		Route::post('getUserBySales', 'Webservices@getUserBySales');
 		Route::post('uploadDocumentByUser', 'Webservices@uploadDocumentByUser');
 		Route::post('uploadDocumentBysale', 'Webservices@uploadDocumentBysale');
+		Route::post('twilioBySale', 'Webservices@twilioBySale');
+		Route::post('twilioByUser', 'Webservices@twilioByUser');
 		
     });
 

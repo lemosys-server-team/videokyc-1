@@ -85,10 +85,7 @@ Route::group(['middleware' => ['auth']], function(){
 
         Route::resource('kyc','Kyc');
         Route::post('kyc/getkyc', 'Kyc@getkyc')->name('kyc.getkyc');
-        Route::get('twilio', 'Kyc@twilio')->name('kyc.twilio');
-
-        
     
-	});
+    });
 
 });

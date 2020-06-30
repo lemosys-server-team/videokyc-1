@@ -5,6 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Twilio\Jwt\AccessToken;
+use Twilio\Jwt\Grants\VideoGrant;
+use Twilio\Rest\Client;
 use App\Schedule;
 
 use Validator;
@@ -17,7 +20,7 @@ class Webservices extends Controller
      * @return [json] array
      */
     public function storeDeviceReading(Request $request){
-    	$status = FALSE;
+        $status = FALSE;
         $validator = Validator::make($request->all(), [
             'readings' => 'required|json'
         ]);
@@ -65,7 +68,7 @@ class Webservices extends Controller
         return response()->json($response);
     }
 
-    /**
+   /**
      * delete users notification
      *
      * @return [string] message
@@ -212,6 +215,112 @@ class Webservices extends Controller
         }
         return response()->json($response);
 
-}
+    }
+
+
+    /**
+     * delete users notification
+     *
+     * @return [string] message
+    */
+    public function twilioBySale(Request $request){  
+        $rules =  ['schedule_id' => 'required'];
+        
+        $validator = Validator::make($request->all(), $rules);   
+
+        if ($validator->fails()) {
+            return response()->json(['status'=>false,'message'=>$validator->errors()->first()]);
+        }    
+        $data=$request->all();  
+        $schedule = Schedule::where('id',$data['schedule_id'])->first();
+        if(isset($schedule)){
+            // Substitute your Twilio Account SID and API Key details
+            $accountSid = 'AC9c4946e7297ef20525589bab03294be4';
+            $apiKeySid = 'SK0450f5649c3fbf181c37eae780576937';
+            $apiKeySecret = 'j6WJ6pw0GhBmAbafpM7vDb4Akt7jYgTR';
+
+            //$twilio = new Client($accountSid, $apiKeySecret);
+            // $new_key = $twilio->newKeys->create();
+            $identity = uniqid();
+           
+            // Create an Access Token
+            $token = new AccessToken(
+                $accountSid,
+                $apiKeySid,
+                $apiKeySecret,
+                3600,
+                $identity
+            );
+            $user_id=isset($schedule->user_id)?$schedule->user_id:'';
+            $sale_id=isset($schedule->sale_id)?$schedule->sale_id:'';
+            $chatroom=$sale_id.'videokycroom'.$user_id;
+
+            //Grant access to Video
+            $grant = new VideoGrant();
+            $grant->setRoom($chatroom);
+            $token->addGrant($grant);
+
+              // Serialize the token as a JWT
+            $res= $token->toJWT();
+            $response=array('status'=>true,'token'=>$res,'message'=>'Token generate Successfully.','room_name'=>$chatroom);
+        }else{
+             $response=array('status'=>false,'message'=>'Token generate failed.');
+        }
+        return response()->json($response);
+    }
+
+    /**
+     * delete users notification
+     *
+     * @return [string] message
+    */
+    public function twilioByUser(Request $request){  
+        $rules =  ['user_id' => 'required',
+                   'schedule_date' => 'required',
+        ];
+        
+        $validator = Validator::make($request->all(), $rules);   
+
+        if ($validator->fails()) {
+            return response()->json(['status'=>false,'message'=>$validator->errors()->first()]);
+        }    
+        $data=$request->all();  
+        $date=date('Y-m-d',strtotime($data['schedule_date']));
+        $schedule = Schedule::where('user_id',$data['user_id'])->whereDate('datetime', '=', $date)->first();
+        if(isset($schedule)){
+            // Substitute your Twilio Account SID and API Key details
+            $accountSid = 'AC9c4946e7297ef20525589bab03294be4';
+            $apiKeySid = 'SK0450f5649c3fbf181c37eae780576937';
+            $apiKeySecret = 'j6WJ6pw0GhBmAbafpM7vDb4Akt7jYgTR';
+
+            $identity = uniqid();
+           
+            // Create an Access Token
+            $token = new AccessToken(
+                $accountSid,
+                $apiKeySid,
+                $apiKeySecret,
+                3600,
+                $identity
+            );
+
+            $user_id=isset($schedule->user_id)?$schedule->user_id:'';
+            $sale_id=isset($schedule->sale_id)?$schedule->sale_id:'';
+            $chatroom=$sale_id.'videokycroom'.$user_id;
+
+            //Grant access to Video
+            $grant = new VideoGrant();
+            $grant->setRoom($chatroom);
+            $token->addGrant($grant);
+
+            // Serialize the token as a JWT
+            $res= $token->toJWT();
+
+            $response=array('status'=>true,'token'=>$res,'message'=>'Token generate Successfully.','room_name'=>$chatroom);
+        }else{
+             $response=array('status'=>false,'message'=>'Token generate failed.');
+        }
+        return response()->json($response);
+    }
 
 }
