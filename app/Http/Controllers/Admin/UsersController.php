@@ -22,7 +22,8 @@ class UsersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){  
-        return view('admin/users/index');
+        $roles = Role::where('id', '!=', config('constants.ROLE_TYPE_SUPERADMIN_ID'))->pluck('name', 'id');
+        return view('admin/users/index',compact('roles'));
     }
 
     /**

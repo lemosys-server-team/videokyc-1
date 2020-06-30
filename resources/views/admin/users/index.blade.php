@@ -27,9 +27,18 @@
                 </span>
                 <span class="text">Add Sales</span>
             </a>
-           
         </div>
         <div class="card-body">
+          <div class="well mb-3">
+                {!! Form::open(['method' => 'POST', 'class' => 'form-inline', 'id' => 'frmFilter']) !!}
+                <div class="form-group mr-sm-2 mb-2">
+                    {!! Form::select('role_id', $roles, old('role_id'), ['id'=>'role_id', 'class' => 'form-control', 'placeholder' => '-Select Type-']) !!}                   
+                </div>   
+
+                <button type="submit" class="btn btn-responsive btn-primary mr-sm-2 mb-2">{{ __('Filter') }}</button>
+                <a href="javascript:;" onclick="resetFilter();" class="btn btn-responsive btn-danger mb-2">{{ __('Reset') }}</a>
+                {!! Form::close() !!}
+            </div> 
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0" id="users">
                     <thead>
@@ -78,7 +87,15 @@
 <script type="text/javascript">
 jQuery(document).ready(function(){
     getUsers();
+    jQuery('#frmFilter').submit(function(){
+        getUsers();
+        return false;
+    });
 });
+function resetFilter(){
+  jQuery('#frmFilter :input:not(:button, [type="hidden"])').val('');
+  getUsers();
+}
 
 function getUsers(){
   var role_id = jQuery('#frmFilter [name=role_id]').val();
