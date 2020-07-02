@@ -124,4 +124,39 @@ class Kyc extends Controller
       $schedule = Schedule::with('user','sale')->where('id',$schedule_id)->first();
       return view('admin.kyc.show', compact('schedule'));
     }
+
+      /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function twilio($schedule_id=null){
+        $sid    = "AC9c4946e7297ef20525589bab03294be4";
+        $token  = "3e25eb6bc857461b68d72d839642fd69";
+        $twilio = new Client($sid, $token);
+
+        // $room = $twilio->video->v1->rooms("RM75976f7a4f963c96ca7588b71217f869")
+        //                           ->fetch();
+        //                           echo "<pre>";
+
+        //                           print_r($room);die;
+
+        $recordings = $twilio->video->v1->recordings
+        ->read(["groupingSid" => ["RM5ad47819cf5be9fdab983b988b205483"],
+                "type"=>'video'],2
+        );
+        $test='';
+        foreach ($recordings as $record) {
+            if($record->type=='audio'){
+                $test=$record->sid;
+            }
+        }
+        $recordingSid = $test;
+        $uri = "https://video.twilio.com/v1/Recordings/$recordingSid/Media";
+        $response = $twilio->request("GET", $uri);
+        $mediaLocation = $response->getContent()["redirect_to"];
+        print_r($mediaLocation);die;
+        die;
+    }
 }

@@ -145,9 +145,10 @@
 <script type="text/javascript">
 
 var dates = <?php echo isset($holiday)?$holiday:'' ?>;
+var datesa = [];
 function DisableDates(date) {
   var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-  return [dates.indexOf(string) == -1];
+  return [datesa.indexOf(string) == -1];
 }
 
 $('.datepicker').datepicker({
