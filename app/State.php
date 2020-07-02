@@ -6,16 +6,15 @@ use App\Country;
 use Illuminate\Database\Eloquent\Model;
 
 class State extends Model
-{
-
-    public function country(){         
-        return $this->belongsTo(Country::class);
-    }
+{   
+	protected $table = 'state';
 
     protected $fillable = [
         'title', 'country_id','is_active',
     ];
 
-    protected $table = 'state';
+    public function country(){         
+        return $this->belongsTo(Country::class);
+    }
 
 }

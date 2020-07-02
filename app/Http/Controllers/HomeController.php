@@ -9,6 +9,7 @@ use App\User;
 use App\Country;
 use App\State;
 use App\City;
+use App\Holiday;
 use Validator;
 
 class HomeController extends Controller
@@ -30,7 +31,13 @@ class HomeController extends Controller
     public function index(){
         $state = State::where(['is_active'=>TRUE])->pluck('title', 'id');
         $city=City::where(['is_active'=>TRUE])->pluck('title', 'id');
-        return view('auth.register',compact('state','city'));
+        $holidays=Holiday::where(['is_active'=>TRUE])->pluck('date')->toArray();
+        $holiday='';
+        if(!empty($holidays)){
+            $date=implode(' ', $holidays);
+            $holiday= json_encode(str_replace(' ', ',', $date));
+        }
+        return view('auth.register',compact('state','city','holiday'));
     }
 
     public function register(Request $request){

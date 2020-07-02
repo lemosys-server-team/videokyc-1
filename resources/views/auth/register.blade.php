@@ -1,6 +1,6 @@
 @extends('auth.valex_app')
 @section('frontend_styles')
-<link href="{{ asset('css/bootstrap-datepicker3.standalone.min.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 @endsection
 @section('content')
 <div class="container-fluid">
@@ -30,6 +30,7 @@
                      </a></div>
                   <div class="card-sigin">
                       <div class="main-signup-header">
+                        <?php print_r($holiday); ?>
                         <!-- <h2>Welcome back!</h2> -->
                         <h5 class="font-weight-semibold mb-4">Kindly fill the registration form for Digital KYC</h5>
                         @if($flash = session('error'))            
@@ -138,18 +139,22 @@
 </div>
 @endsection
 <!-- custom script -->
-
 @section('frontend_script')
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="{{ asset('js/jquery-validation/dist/jquery.validate.min.js') }}"></script>
-<script src="{{ asset('js/datepicker/bootstrap-datepicker.min.js') }}"></script>
-
-
 <script type="text/javascript">
- $('.datepicker').datepicker({
-            format: 'mm/dd/yyyy',
-            orientation: 'bottom',
-            autoclose: true,
-    });
+
+var dates = <?php echo isset($holiday)?$holiday:'' ?>;
+function DisableDates(date) {
+  var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+  return [dates.indexOf(string) == -1];
+}
+
+$('.datepicker').datepicker({
+  dateFormat: 'mm/dd/yy',
+  minDate: new Date(),
+  beforeShowDay: DisableDates,
+});
 
 jQuery(document).ready(function(){
     jQuery('#frmregister').validate({
