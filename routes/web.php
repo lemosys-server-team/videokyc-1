@@ -32,19 +32,16 @@ Route::group(['middleware' => ['auth']], function(){
 	})->name('access-denied');
         Route::resource('profile', 'ProfileController')->only(['index', 'store']);
 		Route::group(['middleware' => ['check_permission'],'namespace'=>'Admin','prefix'=>'admin', 'as' => 'admin.'], function(){	
-
-		Route::get('dashboard', 'DashboardController@index')->name('dashboard');
+        Route::get('dashboard', 'DashboardController@index')->name('dashboard');
 		Route::resource('profile', 'ProfileController')->only(['index', 'store']);
 		Route::resource('settings', 'SettingsController')->only(['index', 'store']);
 		
-
 		//states 
 		Route::resource('states','StateController');
 		Route::get('states/status/{id}', 'StateController@status')->name('states.status');
 		Route::post('states/list', 'StateController@getStates')->name('states.getStates');
 
-
-		// For Users
+        // For Users
 		Route::resources([
 			'users' => 'UsersController',
 			'product_categories' => 'ProductCategories',
@@ -57,12 +54,12 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::post('product_categories/getProductCategories', 'ProductCategories@getProductCategories')->name('product_categories.getProductCategories');
         Route::get('product_categories/status/{id}', 'ProductCategories@status')->name('product_categories.status');
 
-       // For Countries
+        // For Countries
 		Route::resource('countries', 'Countries')->except(['show']);
 		Route::post('countries/list', 'Countries@getCountries')->name('countries.getCountries');
 		Route::get('countries/status/{id}', 'Countries@status')->name('countries.status');	
 
-         // For roles
+        // For roles
 		Route::resource('roles','RoleController');
 		Route::get('roles/destroy/{id}', 'RoleController@destroy')->name('roles.destroy');
 		Route::get('roles/status/{id}', 'RoleController@status')->name('roles.status');
@@ -74,8 +71,7 @@ Route::group(['middleware' => ['auth']], function(){
 		Route::get('cities/updateDLS/{id}', 'Cities@updateDLS')->name('cities.updateDLS');
 		Route::get('cities/getstates', 'Cities@getstate')->name('cities.getstates');
 	
-
-		Route::resource('components','ComponentController');
+        Route::resource('components','ComponentController');
     	Route::get('components/destroy/{id}', 'ComponentController@destroy')->name('components.destroy');
     	Route::get('components/status/{id}', 'ComponentController@status')->name('components.status');
 
@@ -85,7 +81,14 @@ Route::group(['middleware' => ['auth']], function(){
 
         Route::resource('kyc','Kyc');
         Route::post('kyc/getkyc', 'Kyc@getkyc')->name('kyc.getkyc');
-    
+
+        Route::resource('times','Times');
+        Route::post('times/getTimes', 'Times@getTimes')->name('times.getTimes');
+        Route::get('times/status/{id}', 'Times@status')->name('times.status');
+
+        Route::resource('holidays','Holidays');
+        Route::post('holidays/getHolidays', 'Holidays@getHolidays')->name('holidays.getHolidays');
+        Route::get('holidays/status/{id}', 'Holidays@status')->name('holidays.status');
     });
 
 });
