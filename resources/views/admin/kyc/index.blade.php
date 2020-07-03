@@ -62,7 +62,7 @@
                     <thead>
                         <tr>
                           <th>Customer</th>
-                          <th>Assigned to User</th>
+                          <th>Sale</th>
                           <th>Date</th>
                           <th>Aadhar</th>
                           <th>Pan</th>
@@ -77,7 +77,7 @@
                     <tfoot>
                         <tr>
                           <th>Customer</th>
-                          <th>Assigned to User</th>
+                          <th>Sale</th>
                           <th>Date</th>
                           <th>Aadhar</th>
                           <th>Pan</th>

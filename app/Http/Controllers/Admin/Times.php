@@ -108,19 +108,19 @@ class Times extends Controller
             $data = $request->all();
           
             $start_time=isset($request->start_time)?$request->start_time:'';
-            $data['start_time']=date(config('constants.MYSQL_STORE_TIME_FORMAT'),strtotime($start_time));
+            $data['start_time']=date(config('constants.MYSQL_STORE_24TIME_FORMAT'),strtotime($start_time));
 
             $end_time=isset($request->end_time)?$request->end_time:'';
-            $data['end_time']=date(config('constants.MYSQL_STORE_TIME_FORMAT'),strtotime($end_time));
+            $data['end_time']=date(config('constants.MYSQL_STORE_24TIME_FORMAT'),strtotime($end_time));
 
             $break_start_time=isset($request->break_start_time)?$request->break_start_time:'';
             if($break_start_time!=''){
-            	$data['break_start_time']=date(config('constants.MYSQL_STORE_TIME_FORMAT'),strtotime($break_start_time));
+            	$data['break_start_time']=date(config('constants.MYSQL_STORE_24TIME_FORMAT'),strtotime($break_start_time));
             }
             
             $break_end_time=isset($request->break_end_time)?$request->break_end_time:'';
             if($break_end_time!=''){
-            	 $data['break_end_time']=date(config('constants.MYSQL_STORE_TIME_FORMAT'),strtotime($break_end_time));
+            	 $data['break_end_time']=date(config('constants.MYSQL_STORE_24TIME_FORMAT'),strtotime($break_end_time));
             }
            
             Time::create($data);
@@ -173,19 +173,19 @@ class Times extends Controller
             $data = $request->all();
             
             $start_time=isset($request->start_time)?$request->start_time:'';
-            $data['start_time']=date(config('constants.MYSQL_STORE_TIME_FORMAT'),strtotime($start_time));
+            $data['start_time']=date(config('constants.MYSQL_STORE_24TIME_FORMAT'),strtotime($start_time));
 
             $end_time=isset($request->end_time)?$request->end_time:'';
-            $data['end_time']=date(config('constants.MYSQL_STORE_TIME_FORMAT'),strtotime($end_time));
+            $data['end_time']=date(config('constants.MYSQL_STORE_24TIME_FORMAT'),strtotime($end_time));
 
             $break_start_time=isset($request->break_start_time)?$request->break_start_time:'';
             if($break_start_time!=''){
-            	$data['break_start_time']=date(config('constants.MYSQL_STORE_TIME_FORMAT'),strtotime($break_start_time));
+            	$data['break_start_time']=date(config('constants.MYSQL_STORE_24TIME_FORMAT'),strtotime($break_start_time));
             }
             
             $break_end_time=isset($request->break_end_time)?$request->break_end_time:'';
             if($break_end_time!=''){
-            	 $data['break_end_time']=date(config('constants.MYSQL_STORE_TIME_FORMAT'),strtotime($break_end_time));
+            	 $data['break_end_time']=date(config('constants.MYSQL_STORE_24TIME_FORMAT'),strtotime($break_end_time));
             }
             $time->update($data);
             
@@ -207,6 +207,6 @@ class Times extends Controller
       $time = Time::findOrFail($time_id);
       $time->delete();
       session()->flash('danger',__('global.messages.delete'));
-      return redirect()->route('admin.time.index');
+      return redirect()->route('admin.times.index');
     }
 }

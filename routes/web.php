@@ -20,6 +20,7 @@ if(env('API_URL')=="" || env('API_URL')==url('/')){
 	Route::get('index', 'HomeController@index')->name('index');
 	Route::post('register', 'HomeController@register')->name('register');
 	Route::get('register/getstatetocity', 'HomeController@getstatetocity')->name('register.getstatetocity');
+	Route::post('getScheduleTimes', 'HomeController@getScheduleTimes')->name('getScheduleTimes');
 }
 
 Route::group(['middleware' => ['frontend']], function(){	

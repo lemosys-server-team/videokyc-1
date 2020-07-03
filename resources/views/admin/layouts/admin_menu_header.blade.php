@@ -82,15 +82,15 @@
 
 								<ul class="sub-menu">
 
-								   <!-- @can('admin.times.index')
+								  @can('admin.times.index')
                                         <li aria-haspopup="true"><a href="{{ route('admin.times.index') }}" class="slide-item">Times</a></li>
 
-								   @endcan -->
+								  @endcan 
 
-								  <!--  @can('admin.holidays.index')
+								  @can('admin.holidays.index')
                                         <li aria-haspopup="true"><a href="{{ route('admin.holidays.index') }}" class="slide-item">Holidays</a></li>
 
-								   @endcan -->
+								  @endcan 
 
 
 								   @can('admin.countries.index')
