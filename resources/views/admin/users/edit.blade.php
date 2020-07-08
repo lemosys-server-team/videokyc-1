@@ -67,17 +67,14 @@
                     @endif
                 </div>
             </div>
-            <div class="form-group {{$errors->has('hours') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                 <label class="col-md-3 control-label" for="hours">Working hours<span style="color:red">*</span></label>
-                  <div class="col-md-6">
-                    <select name="hours" class="form-control" id="hours" >
-                        <option value="">-Select-</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4" >4</option>
-                    </select>
-                </div>
+            <div class="form-group {{$errors->has('times') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                 <label class="col-md-6 control-label" for="times">Working hours<span style="color:red">*</span></label>
+                 <div class="col-md-6">
+                       {!! Form::select('time_id', $times, old('time_id',$user->time_id), ['class' => 'form-control','id'=>'time_id','placeholder'=>'-Select Times-']) !!}
+                        @if($errors->has('time_id'))
+                        <strong for="time_id" class="help-block">{{ $errors->first('time_id') }}</strong>
+                        @endif
+                 </div>
             </div>
 
           <!--  <div class="form-group">

@@ -10,6 +10,7 @@ use App\Country;
 use App\State;
 use App\City;
 use App\Holiday;
+use App\Schedule;
 use Validator;
 
 class HomeController extends Controller
@@ -39,7 +40,12 @@ class HomeController extends Controller
         }
         return view('auth.register',compact('state','city','holiday'));
     }
-
+    
+       /**
+     * Show the application register.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
     public function register(Request $request){
 
         $rules = [
@@ -66,68 +72,68 @@ class HomeController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
     }
-
+   
+/**
+     * Show the application getstatetocity.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
     public function getstatetocity(Request $request){
         $city = City::where('state_id',$request->state_id)->where(['is_active'=>TRUE])->pluck('title', 'id'); 
         return response()->json($city);
     }
 
-    /*
-    * To send device settings to IoT server
-    * 
-    */
+  // $hours  = array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20");
+        //     $mins = array("00","15","30","45");
+        //     $select='';
+        //     foreach ($hours as $hour) {
+        //         foreach($mins as $min) {
+        //             $select .= '<option value="'.$hour.':'.$min.'">'.$hour.':'.$min.
+        //                        '</option>';
+        //             }
+        //     }
+/**
+     * Show the application getstatetocity.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getScheduleTimes(Request $request){
+      
+        $date=isset($request->date)?$request->date:date('Y-m-d');
+        $date=date('Y-m-d',strtotime($date));
+        $opentime = strtotime('09:00');
+        $closetime = strtotime('18:15');
+        $html='';
+        $sales=User::with('roles')
+          ->whereHas('roles', function($query){
+            $query->where('id',config('constants.ROLE_TYPE_SALES_ID'));
+        })->get()->toArray();
+        if(count($sales) > 0){
+            while($opentime < $closetime){
+                $time=date('H:i:00', $opentime);
+                $newdate=$date.' '.$time;
+                foreach ($sales as $key => $sale) {
+                    $time_id=isset($sale['time_id'])?$sale['time_id']:0;
+                    $sale_id=isset($sale['id'])?$sale['id']:0;
+                    $times=$this->saleAvailability($newdate);
+                    if($times=='true'){
+                        $html.= '<option value="'. date('h:i A', $opentime) .'">' . date('h:i A', $opentime) . '</option>';
+                        break;
+                    }
+                }
+                $opentime = strtotime('+15 minutes', $opentime);
+            }
+        }
+        return response()->json($html);
+    }
+    
+    public function saleAvailability($date=null){
+        $records=Schedule::where('datetime', '=',$date)->first();
+        if(isset($records)){
+            return 'false';
+        }else{
+            return 'true';
+        }
+    }
 
-    /*public function sendDeviceData(){
-        $endpoint = "https://temspace.in/Projects/GNET/Gpro/data_for_machine.php";
-        $client = new \GuzzleHttp\Client();
-
-        $response = $client->request('POST', $endpoint, [
-            'form_params' => [
-                'data' => json_encode([
-                    "machine_id" => "01AAA00001",
-                    "voltage_up_limit" => rand(230, 235),
-                    "voltage_down_limit" => rand(201, 210),
-                    "voltage_up_action" => rand(0, 2),
-                    "voltage_down_action" => rand(0, 2),
-                    "test_on_time" => rand(200, 210),
-                    "test_off_time" => rand(200, 210),
-                    "relay_1_mode" => rand(1, 4),
-                    "relay_2_mode" => rand(1, 4),
-                    "relay_3_mode" => rand(1, 4),
-                    "relay_4_mode" => rand(1, 4),
-                    "relay_5_mode" => rand(1, 4),
-                    "relay_1_mode_data_1" => rand(100, 1000),
-                    "relay_2_mode_data_1" => rand(100, 1000),
-                    "relay_3_mode_data_1" => rand(100, 1000),
-                    "relay_4_mode_data_1" => rand(100, 1000),
-                    "relay_5_mode_data_1" => rand(100, 1000),
-                    "relay_1_mode_data_2" => rand(100, 1000),
-                    "relay_2_mode_data_2" => rand(100, 1000),
-                    "relay_3_mode_data_2" => rand(100, 1000),
-                    "relay_4_mode_data_2" => rand(100, 1000),
-                    "relay_5_mode_data_2" => rand(100, 1000),
-                    "relay_1_mode_periodic_data_1" => rand(100, 200),
-                    "relay_2_mode_periodic_data_1" => rand(100, 200),
-                    "relay_3_mode_periodic_data_1" => rand(100, 200),
-                    "relay_4_mode_periodic_data_1" => rand(100, 200),
-                    "relay_5_mode_periodic_data_1" => rand(100, 200),
-                    "relay_1_mode_periodic_data_2" => rand(100, 200),
-                    "relay_2_mode_periodic_data_2" => rand(100, 200),
-                    "relay_3_mode_periodic_data_2" => rand(100, 200),
-                    "relay_4_mode_periodic_data_2" => rand(100, 200),
-                    "relay_5_mode_periodic_data_2" => rand(100, 200),
-                    "relay_1_test_mode" => rand(0, 1),
-                    "relay_2_test_mode" => rand(0, 1),
-                    "relay_3_test_mode" => rand(0, 1),
-                    "relay_4_test_mode" => rand(0, 1),
-                    "relay_5_test_mode" => rand(0, 1)
-                ])
-            ]
-        ]);
-
-        $statusCode = $response->getStatusCode();
-        echo "Status Code: $statusCode<br/>";
-        $content = $response->getBody();
-        echo "Content: $content<br/>";
-    }*/
 }

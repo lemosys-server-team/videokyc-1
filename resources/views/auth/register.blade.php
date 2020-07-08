@@ -30,8 +30,7 @@
                      </a></div>
                   <div class="card-sigin">
                       <div class="main-signup-header">
-                        <?php print_r($holiday); ?>
-                        <!-- <h2>Welcome back!</h2> -->
+                       <!-- <h2>Welcome back!</h2> -->
                         <h5 class="font-weight-semibold mb-4">Kindly fill the registration form for Digital KYC</h5>
                         @if($flash = session('error'))            
                           <div class="alert alert-danger alert-dismissible" role="alert">
@@ -109,16 +108,16 @@
                         </p>
                         @endif
                           </div>
-                          <div class="form-group {{$errors->has('dates') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                            {!! Form::text('dates',old('dates'), ['id'=>'dates','readOnly'=>'readOnly' ,'class' => 'form-control datepicker', 'placeholder' => 'MM/DD/YYYY']) !!}                         
-                            @if($errors->has('dates'))
+                          <div class="form-group {{$errors->has('date') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                            {!! Form::text('date',old('date'), ['id'=>'date','readOnly'=>'readOnly' ,'class' => 'form-control datepicker', 'placeholder' => 'MM/DD/YYYY']) !!}                         
+                            @if($errors->has('date'))
                         <p class="help-block">
-                            <strong>{{ $errors->first('dates') }}</strong>
+                            <strong>{{ $errors->first('date') }}</strong>
                         </p>
                         @endif
                           </div>
                           <div class="form-group">
-                            {!! Form::time('time',old('time'), ['class' => 'form-control', 'placeholder' => 'Time']) !!}
+                            {!! Form::select('time', [], old('time'), ['id'=>'time', 'class' => 'form-control', 'placeholder' => '-Select Time-']) !!}            
                             @if($errors->has('time'))
                         <p class="help-block">
                             <strong>{{ $errors->first('time') }}</strong>
@@ -145,17 +144,28 @@
 <script type="text/javascript">
 
 var dates = <?php echo isset($holiday)?$holiday:'' ?>;
-var datesa = [];
 function DisableDates(date) {
   var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-  return [datesa.indexOf(string) == -1];
+  return [dates.indexOf(string) == -1];
 }
 
 $('.datepicker').datepicker({
-  dateFormat: 'mm/dd/yy',
-  minDate: new Date(),
-  beforeShowDay: DisableDates,
+    dateFormat: 'mm/dd/yy',
+    minDate: new Date(),
+    beforeShowDay: DisableDates,
+    onSelect: function(dateText, inst) {
+            $.ajax({
+                    type : "POST",
+                    url :'{{route('getScheduleTimes')}}',
+                    data:{date:dateText},
+                    success:function(res){
+                        $("#time").empty();
+                        $("#time").html(res);
+                    }
+            });
+    }
 });
+
 
 jQuery(document).ready(function(){
     jQuery('#frmregister').validate({
@@ -170,7 +180,7 @@ jQuery(document).ready(function(){
             email: {
                 required: true
             }, 
-            dates: {
+            date: {
                 required: true
             },
             time: {
@@ -196,18 +206,18 @@ $( "#state_id" ).change(function(){
     var state_id = $(this).val();
     if(state_id){
         $.ajax({
-        type : "GET",
-        url :'{{route('register.getstatetocity')}}',
-        data:{state_id:state_id},
-        success:function(res){
-        $("#city_id").empty();
-        $("#city_id").append('<option value="">Select City</option>');
-        $.each(res,function(key,value){
-        $("#city_id").append('<option value="'+key+'">'+value+'</option>');
+                type : "GET",
+                url :'{{route('register.getstatetocity')}}',
+                data:{state_id:state_id},
+                success:function(res){
+                    $("#city_id").empty();
+                    $("#city_id").append('<option value="">Select City</option>');
+                    $.each(res,function(key,value){
+                        $("#city_id").append('<option value="'+key+'">'+value+'</option>');
+                    });
+                }
         });
-        }
-});
-}
+    }
 });
 </script>
 

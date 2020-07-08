@@ -32,6 +32,7 @@
 		
 		'MYSQL_STORE_DATE_FORMAT' => 'Y-m-d',
 		'MYSQL_STORE_TIME_FORMAT' => 'h:i:s',
+		'MYSQL_STORE_24TIME_FORMAT' => 'H:i:s',
 		'MYSQL_STORE_DATETIME_FORMAT' => 'Y-m-d h:i:s',
 		'MYSQL_DATE_FORMAT' => '%d %b %Y',
 		'MYSQL_DATETIME_FORMAT' => '%d %b %Y, %h:%i %p',

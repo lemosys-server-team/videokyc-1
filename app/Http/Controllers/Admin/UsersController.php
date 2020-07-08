@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use App\User;
+use App\Time;
+use App\Schedule;
 use Validator;
 use Auth;
 use DataTables;
@@ -105,7 +107,10 @@ class UsersController extends Controller
         $roles = Role::where('id', '!=', config('constants.ROLE_TYPE_SUPERADMIN_ID'))->get()->pluck('name', 'id')->map(function($value, $key){
             return ucwords($value);
         });
-        return view('admin.users.create', compact('roles'));
+        $times = Time::where('is_active',true)->pluck('title', 'id')->map(function($value, $key){
+          return ucwords($value);
+        });
+        return view('admin.users.create', compact('roles','times'));
     }
 
     /**
@@ -117,6 +122,7 @@ class UsersController extends Controller
     public function store(Request $request){
         $rules = [
             'role_id'           => 'required', 
+            'time_id'           => 'required', 
             'employee_id'       => 'required', 
             'name'              => 'required', 
             'email'             => 'required',
@@ -141,7 +147,7 @@ class UsersController extends Controller
             if (!empty($request->role_id)) {
                 $user->assignRole($request->role_id);
             }
-
+            
             $request->session()->flash('success',__('global.messages.add'));
             return redirect()->route('admin.users.index');
         }else {
@@ -170,7 +176,10 @@ class UsersController extends Controller
         $roles = Role::where('id', '!=', config('constants.ROLE_TYPE_SUPERADMIN_ID'))->get()->pluck('name', 'id')->map(function($value, $key){
             return ucwords($value);
         });
-        return view('admin.users.edit',compact('user','roles'));
+        $times = Time::where('is_active',true)->pluck('title', 'id')->map(function($value, $key){
+          return ucwords($value);
+        });
+        return view('admin.users.edit',compact('user','roles','times'));
     }
 
     /**
@@ -184,6 +193,7 @@ class UsersController extends Controller
         $user = User::findOrFail($id);
         $rules = [
            /* 'role_id'           => 'required', */
+            'time_id'           => 'required', 
             'name'              => 'required', 
             'employee_id'       => 'required',  
             'email'             => 'required',
@@ -254,10 +264,49 @@ class UsersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id){
-      $user = User::findOrFail($id);
-      $user->delete();
-      session()->flash('danger',__('global.messages.delete'));
-      return redirect()->route('admin.users.index');
+      $user = User::with('roles')->whereId($id)->first();
+      if(isset($user)){
+        if($user['roles'][0]['id']==config('constants.ROLE_TYPE_SALES_ID')){
+            $schedules = Schedule::where('sale_id',$id)->get();
+            foreach ($schedules as $key => $schedule) {
+                $ss01 = isset($schedule->ss01)?$schedule->ss01:'';
+                if(isset($ss01) && $ss01!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$ss01)) {
+                    \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$ss01);
+                }
+                $ss02 = isset($schedule->ss02)?$schedule->ss02:'';
+                if (isset($ss02) && $ss02!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$ss02)) {
+                    \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$ss02);
+                }
+                $ss03 = isset($schedule->ss03)?$schedule->ss03:'';
+                if (isset($ss03) && $ss03!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$ss03)) {
+                    \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$ss03);
+                }
+                $schedule->delete();
+            }
+        }else{
+            $schedules = Schedule::where('user_id',$id)->get();
+            foreach ($schedules as $key => $schedule) {
+                    $image_adhar = isset($schedule->image_adhar)?$schedule->image_adhar:'';
+                    if (isset($image_adhar) && $image_adhar!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$image_adhar)) {
+                        \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_USER').$image_adhar);
+                    }
+
+                    $image_pen = isset($schedule->image_pen)?$schedule->image_pen:'';
+                    if (isset($image_pen) && $image_pen!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$image_pen)) {
+                        \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_USER').$image_pen);
+                    }
+                    
+                    $image_photo = isset($schedule->image_photo)?$schedule->image_photo:'';
+                    if (isset($image_photo) && $image_photo!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$image_photo)) {
+                        \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_USER').$image_photo);
+                    }
+                    $schedule->delete();
+            }
+        }
+        $user->forceDelete();
+    }
+    session()->flash('danger',__('global.messages.delete'));
+    return redirect()->route('admin.users.index');
     }
 
 }

@@ -102,7 +102,7 @@ class Webservices extends Controller
                 $image_pen  = time().$schedule->id. 'image_pen.' . $file->getClientOriginalExtension();
                 $file->storeAs(config('constants.SCHEDULE_UPLOAD_PATH_USER'), $image_pen);
                
-                $old_profile_picture = isset($user->image_pen)?$user->image_pen:'';
+                $old_image_pen = isset($schedule->image_pen)?$schedule->image_pen:'';
                 if (isset($old_image_pen) && $old_image_pen!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$old_image_pen)) {
                     \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_USER').$old_image_pen);
                 }
@@ -114,7 +114,7 @@ class Webservices extends Controller
                 $image_adhar  = time().$schedule->id.'image_adhar.' . $file->getClientOriginalExtension();
                 $file->storeAs(config('constants.SCHEDULE_UPLOAD_PATH_USER'), $image_adhar);
                
-                $old_profile_picture = isset($user->image_adhar)?$user->image_adhar:'';
+                $old_image_adhar = isset($schedule->image_adhar)?$schedule->image_adhar:'';
                 if (isset($old_image_adhar) && $old_image_adhar!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$old_image_adhar)) {
                     \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_USER').$old_image_adhar);
                 }
@@ -126,7 +126,7 @@ class Webservices extends Controller
                 $image_photo  = time().$schedule->id.'image_photo.' . $file->getClientOriginalExtension();
                 $file->storeAs(config('constants.SCHEDULE_UPLOAD_PATH_USER'), $image_photo);
                
-                $old_image_photo = isset($user->image_photo)?$user->image_photo:'';
+                $old_image_photo = isset($schedule->image_photo)?$schedule->image_photo:'';
                 if (isset($old_image_photo) && $old_image_photo!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$old_image_photo)) {
                     \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_USER').$old_image_photo);
                 }
@@ -177,7 +177,7 @@ class Webservices extends Controller
                 $ss01  = time().$schedule->id. 'ss01.' . $file->getClientOriginalExtension();
                 $file->storeAs(config('constants.SCHEDULE_UPLOAD_PATH_SALES'), $ss01);
                
-                $old_profile_picture = isset($user->ss01)?$user->ss01:'';
+                $old_profile_picture = isset($schedule->ss01)?$schedule->ss01:'';
                 if (isset($old_ss01) && $old_ss01!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$old_ss01)) {
                     \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$old_ss01);
                 }
@@ -189,7 +189,7 @@ class Webservices extends Controller
                 $ss02  = time().$schedule->id.'ss02.' . $file->getClientOriginalExtension();
                 $file->storeAs(config('constants.SCHEDULE_UPLOAD_PATH_SALES'), $ss02);
                
-                $old_profile_picture = isset($user->ss02)?$user->ss02:'';
+                $old_profile_picture = isset($schedule->ss02)?$schedule->ss02:'';
                 if (isset($old_ss02) && $old_ss02!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$old_ss02)) {
                     \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$old_ss02);
                 }
@@ -201,7 +201,7 @@ class Webservices extends Controller
                 $ss03  = time().$schedule->id.'ss03.' . $file->getClientOriginalExtension();
                 $file->storeAs(config('constants.SCHEDULE_UPLOAD_PATH_SALES'), $ss03);
                
-                $old_ss03 = isset($user->ss03)?$user->ss03:'';
+                $old_ss03 = isset($schedule->ss03)?$schedule->ss03:'';
                 if (isset($old_ss03) && $old_ss03!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$old_ss03)) {
                     \Storage::delete(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$old_ss03);
                 }
