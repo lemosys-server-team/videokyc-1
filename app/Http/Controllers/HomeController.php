@@ -9,6 +9,7 @@ use App\User;
 use App\Country;
 use App\State;
 use App\City;
+use App\Time;
 use App\Holiday;
 use App\Schedule;
 use Validator;
@@ -52,29 +53,54 @@ class HomeController extends Controller
             'name'       => 'required', 
             'mobile_number'     => 'required|unique:'.with(new User)->getTable().',mobile_number',
             'email'      => 'required',
-            // 'state_id'        => 'required',
-            // 'city_id'        => 'required',
-            // 'address1'      =>'required',
-            // 'address2'      =>'required',
-            // 'date'        => 'required',
-            // 'time'        => 'required',
+            'state_id'        => 'required',
+            'city_id'        => 'required',
+            'address1'      =>'required',
+            'address2'      =>'required',
+            'date'        => 'required',
+            'time'        => 'required',
         ];
         $validator = Validator::make($request->all(), $rules);
-        if ($validator->passes()) {
+        if($validator->passes()){
             $data = $request->all();
-            $data['password'] = Hash::make(123456);
-            $user = User::create($data);
-            //assign user roles
-            $user->assignRole(config('constants.ROLE_TYPE_USER_ID'));
-            $request->session()->flash('success',__('Details submitted successfully'));
-            return redirect()->back();
-        }else {
+            $scheduledata=explode("-",$data['time']);
+            $sale_id=isset($scheduledata[0])?$scheduledata[0]:0;
+
+            $schedule_time=isset($scheduledata[1])?$scheduledata[1]:'';
+            $schedule_time=date('H:i:00',strtotime($schedule_time));
+
+            $date=isset($request->date)?$request->date:date(config('constants.MYSQL_STORE_DATE_FORMAT'));
+			$date=date(config('constants.MYSQL_STORE_DATE_FORMAT'),strtotime($date));
+            $newdate=$date.' '.$schedule_time;
+            
+            if(intval($sale_id > 0) && $schedule_time!=''){
+               $availabiletime=saleAvailability($newdate,$sale_id,$schedule_time);
+                if($availabiletime == 'true'){
+               	  $data['password'] = Hash::make(123456);
+                    $user = User::create($data);
+                    //assign user roles
+               	    $user->assignRole(config('constants.ROLE_TYPE_USER_ID'));
+		            if(isset($user->id)){
+		            	$scheduleArray=array('status'=>config('constants.PENDING'),'sale_id'=>$sale_id,'user_id'=>$user->id,'datetime'=>$newdate);
+		                Schedule::create($scheduleArray);
+		            }
+		            $request->session()->flash('success',__('Details Submitted Successfully.'));
+		            return redirect()->back();
+                }else{
+ 				 	$request->session()->flash('success',__('Sale Time Not Availabile.'));
+ 				  	return redirect()->back()->withInput();
+                }
+            }else{
+            	$request->session()->flash('success',__('User Registration Faild.'));
+            	return redirect()->back();
+            }
+        }else{
             return redirect()->back()->withErrors($validator)->withInput();
         }
     }
    
 /**
-     * Show the application getstatetocity.
+* Show the application getstatetocity.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
@@ -83,15 +109,6 @@ class HomeController extends Controller
         return response()->json($city);
     }
 
-  // $hours  = array("01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20");
-        //     $mins = array("00","15","30","45");
-        //     $select='';
-        //     foreach ($hours as $hour) {
-        //         foreach($mins as $min) {
-        //             $select .= '<option value="'.$hour.':'.$min.'">'.$hour.':'.$min.
-        //                        '</option>';
-        //             }
-        //     }
 /**
      * Show the application getstatetocity.
      *
@@ -99,25 +116,28 @@ class HomeController extends Controller
      */
     public function getScheduleTimes(Request $request){
       
+      	$start_time=Time::where('is_active',TRUE)->min('start_time');
+        $end_time=Time::where('is_active',TRUE)->max('end_time');
+        
         $date=isset($request->date)?$request->date:date('Y-m-d');
         $date=date('Y-m-d',strtotime($date));
-        $opentime = strtotime('09:00');
-        $closetime = strtotime('18:15');
+        $opentime = strtotime($start_time);
+        $closetime = strtotime($end_time);
         $html='';
         $sales=User::with('roles')
           ->whereHas('roles', function($query){
             $query->where('id',config('constants.ROLE_TYPE_SALES_ID'));
-        })->get()->toArray();
+        })->where('is_active',TRUE)->get()->toArray();
         if(count($sales) > 0){
             while($opentime < $closetime){
                 $time=date('H:i:00', $opentime);
                 $newdate=$date.' '.$time;
                 foreach ($sales as $key => $sale) {
-                    $time_id=isset($sale['time_id'])?$sale['time_id']:0;
+                    //$time_id=isset($sale['time_id'])?$sale['time_id']:0;
                     $sale_id=isset($sale['id'])?$sale['id']:0;
-                    $times=$this->saleAvailability($newdate);
+                    $times=saleAvailability($newdate,$sale_id,$time);
                     if($times=='true'){
-                        $html.= '<option value="'. date('h:i A', $opentime) .'">' . date('h:i A', $opentime) . '</option>';
+                        $html.= '<option value="'.$sale_id.'-'. date('h:i A', $opentime) .'">' . date('h:i A', $opentime) . '</option>';
                         break;
                     }
                 }
@@ -126,14 +146,33 @@ class HomeController extends Controller
         }
         return response()->json($html);
     }
-    
-    public function saleAvailability($date=null){
-        $records=Schedule::where('datetime', '=',$date)->first();
-        if(isset($records)){
-            return 'false';
-        }else{
-            return 'true';
-        }
-    }
+
+	public function saleAvailability1($date=null,$time_id=null,$time=null){
+    	$times=Time::where('id',$time_id)->whereRaw("('$time' BETWEEN start_time AND  end_time)")->first();
+		if(isset($times)){
+		    $breacktime=Time::where('id',$time_id)->whereRaw("('$time' BETWEEN break_start_time AND  break_end_time)")->first();
+			if(isset($breacktime)){
+				if($breacktime->break_end_time == $time){
+					$records=Schedule::where('datetime', '=',$date)->first();
+			        if(isset($records)){
+			            return 'false';
+			        }else{
+			            return 'true';
+			        }
+				}else{
+					return 'false ';
+				}
+			}else{
+				$records=Schedule::where('datetime', '=',$date)->first();
+		        if(isset($records)){
+		            return 'false';
+		        }else{
+		            return 'true';
+		        }
+			}
+		}else{
+			return 'false ';
+	    }
+	}
 
 }

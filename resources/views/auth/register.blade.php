@@ -1,6 +1,6 @@
 @extends('auth.valex_app')
 @section('frontend_styles')
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="{{asset('css/jquery-ui.css')}}" rel="stylesheet">
 @endsection
 @section('content')
 <div class="container-fluid">
@@ -139,7 +139,7 @@
 @endsection
 <!-- custom script -->
 @section('frontend_script')
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="{{ asset('js/datepicker/jquery-ui.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/jquery-validation/dist/jquery.validate.min.js') }}"></script>
 <script type="text/javascript">
 
