@@ -71,6 +71,7 @@
                           <th>SS02</th>
                           <th>SS03</th>
                           <th>Status</th>
+                          <th>KYC Status</th>
                           <th>Action</th>                          
                         </tr>
                     </thead>
@@ -86,6 +87,7 @@
                           <th>SS02</th>
                           <th>SS03</th>
                           <th>Status</th>
+                          <th>KYC Status</th>
                           <th>Action</th>                        
                         </tr>
                     </tfoot>
@@ -160,16 +162,17 @@ function getkyc(){
           {data: 'user.name', name: 'user.name'},
           {data: 'sale.name', name: 'sale.name'},
           {data: 'datetime', name: 'datetime'},
-          {data: 'final_status', name: 'final_status'},
+          {data: 'image_adhar', name: 'image_adhar'},
           {data: 'image_pen', name: 'image_pen'},
           {data: 'image_photo', name: 'image_photo'},
           {data: 'ss01', name: 'ss01'},
           {data: 'ss02', name: 'ss02'},
           {data: 'ss03', name: 'ss03'},
-          {data: 'status', name: 'status'},
+          {data: 'final_status', name: 'final_status'},
+          {data: 'kyc_status', name: 'kyc_status'},
           {data: 'action', name: 'action', orderable: false, searchable: false, "width": "2%"},            
       ],           
-      order: [[0, 'desc']],
+      order: [[2, 'desc']],
       language: {
             searchPlaceholder: 'Search...',
             sSearch: '',

@@ -157,7 +157,7 @@ function getSchedules(){
           {data: 'status', name: 'status'},
           {data: 'action', name: 'action', orderable: false, searchable: false, "width": "12%"},            
       ],           
-      order: [[0, 'desc']],
+      order: [[4, 'desc']],
       language: {
             searchPlaceholder: 'Search...',
             sSearch: '',

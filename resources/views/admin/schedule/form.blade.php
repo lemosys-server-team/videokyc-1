@@ -1,7 +1,7 @@
 @extends('admin.layouts.valex_app')
 @section('styles')
 <link href="{{asset('template/valex-theme/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-<link href="{{ asset('css/bootstrap-datepicker3.standalone.min.css') }}" rel="stylesheet">
+<link href="{{asset('css/jquery-ui.css')}}" rel="stylesheet">
 @endsection
 @section('content')
 <div class="container">
@@ -36,29 +36,17 @@
                             @endif
                          </div>
                     </div>
-                    
-                    <div class="form-group {{$errors->has('date') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                     <div class="form-group {{$errors->has('date') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
                         <label class="col-md-3 control-label" for="date">Date <span style="color:red">*</span></label>
                         <div class="col-md-6">
-                            <?php $date=isset($schedule->datetime)?$schedule->datetime:date(config('constants.MYSQL_STORE_DATE_FORMAT'));
-                                $date=date(config('constants.SITE_DATE_FORMAT'),strtotime($date)); ?>
-                            {!! Form::text('date',old('dates',$date), ['readOnly'=>'readOnly' ,'class' => 'form-control datepicker', 'placeholder' => 'MM/DD/YYYY']) !!}
+                            <?php $date=isset($schedule->datetime)?$schedule->datetime:'';
+                            if($date!=''){
+                                $date=date(config('constants.SITE_DATE_FORMAT'),strtotime($date)); 
+                            }?>
+                            {!! Form::text('date',old('date',$date), ['readOnly'=>'readOnly', 'id'=>'date' ,'class' => 'form-control datepicker', 'placeholder' => 'MM/DD/YYYY']) !!}
+                            
                             @if($errors->has('date'))
-
-                            <strong for="date" class="help-block">{{ $errors->first('date') }}</strong>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group {{$errors->has('time') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
-                        <label class="col-md-3 control-label" for="time">Time<span style="color:red">*</span></label>
-                        <div class="col-md-6">
-                            <?php $time=isset($schedule->datetime)?$schedule->datetime:'';
-                                  if($time!=''){
-                                        $time=date('H:i',strtotime($time)); 
-                                } ?>
-                            {!! Form::time('time',old('time',$time), ['class' => 'form-control', 'placeholder' => 'Time']) !!}
-                            @if($errors->has('time'))
-                            <strong for="time" class="help-block">{{ $errors->first('time') }}</strong>
+                             <strong for="date" class="help-block">{{ $errors->first('date') }}</strong>
                             @endif
                         </div>
                     </div>
@@ -72,7 +60,20 @@
                             @endif
                         </div>
                     </div>
-                    
+                    <div class="form-group {{$errors->has('time') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                        <label class="col-md-3 control-label" for="time">Time<span style="color:red">*</span></label>
+                        <div class="col-md-6">
+                          <?php $time=isset($schedule->datetime)?$schedule->datetime:'';
+                                if($time!=''){
+                                   $time=date('H:i',strtotime($time)); 
+                                }
+                                ?>
+                               {!! Form::select('time', [], old('time'), ['id'=>'time', 'class' => 'form-control', 'placeholder' => '-Select Time-']) !!}      
+                            @if($errors->has('time'))
+                            <strong for="time" class="help-block">{{ $errors->first('time') }}</strong>
+                            @endif
+                        </div>
+                    </div>
                 </div>  
                 <div class="card-footer">
                     <button type="submit" class="btn btn-responsive btn-primary">{{ __('Submit') }}</button>
@@ -87,10 +88,8 @@
 @endsection
 @section('scripts')
 <script type="text/javascript" src="{{ asset('js/jquery-validation/dist/jquery.validate.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('js/jquery-validation/dist/additional-methods.min.js') }}"></script>
 <script src="{{ asset('template/valex-theme/plugins/select2/js/select2.min.js') }}"></script>
-<script src="{{ asset('js/datepicker/bootstrap-datepicker.min.js') }}"></script>
-
+<script src="{{ asset('js/datepicker/jquery-ui.js') }}"></script>
 <script type="text/javascript">
 jQuery(document).ready(function(){
     //$('[name="role_id[]"]').selectpicker();
@@ -102,11 +101,25 @@ jQuery(document).ready(function(){
         placeholder: '-Select User-'
     });
 
+    var dates = <?php echo isset($holiday)&&$holiday!=''?$holiday:'[]' ?>;
+    function DisableDates(date) {
+      var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+      return [dates.indexOf(string) == -1];
+    }
+
     $('.datepicker').datepicker({
-            format: 'mm/dd/yyyy',
-            orientation: 'bottom',
-            autoclose: true
+        dateFormat: 'mm/dd/yy',
+        minDate: new Date(),
+        beforeShowDay: DisableDates,
+        onSelect: function(dateText, inst) {
+             var sale_id=$('#sale_id').val();
+             if(sale_id!=''){
+                times();
+             }
+            
+        }
     });
+
 
     jQuery('#frmSchedules').validate({
         rules: {
@@ -124,6 +137,33 @@ jQuery(document).ready(function(){
             },
         }
     });
+
+    $("#sale_id").change(function(){
+        var sale_id=$(this).val();
+        var date=$('#date').val();
+        if(date!=''){
+           times();
+        }
+    }).trigger("change");
+
 });
+
+function times(){
+     var sale_id=$('#sale_id').val();
+     var date=$('#date').val();
+     var selected_date='<?php echo isset($selected_date)&&$selected_date!=''?$selected_date:'' ?>'; 
+     
+     $.ajax({
+            type : "POST",
+            url :'{{route('admin.schedules.getScheduleTimes')}}',
+            data:{date:date,sale_id,sale_id:sale_id,selected_date:selected_date},
+            success:function(res){
+                $("#time").empty();
+                $("#time").html(res);
+            }
+    });
+
+}
+
 </script>
 @endsection
