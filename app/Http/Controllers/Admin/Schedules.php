@@ -90,7 +90,7 @@ class Schedules extends Controller
             })
             ->addColumn('action', function ($schedule) {
                 
-                      $action = '<a href="'.route('admin.schedules.show',[$schedule->id]).'" class="btn btn-success btn-circle btn-sm"><i class="fa fa-eye"></i></a> ';
+                      $action = '<a href="'.route('admin.schedules.show',[$schedule->id]).'" class="btn btn-warning btn-circle btn-sm"><i class="fa fa-eye"></i></a> ';
 
                       if($schedule->status == config('constants.PENDING')){
                         $action .='<a href="'.route('admin.schedules.edit',[$schedule->id]).'" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a> ';
@@ -161,15 +161,13 @@ class Schedules extends Controller
             $date=date(config('constants.MYSQL_STORE_DATE_FORMAT'),strtotime($date));
 
             $user_id=isset($request->user_id)?$request->user_id:0;
+            $sale_id=isset($request->sale_id)?$request->sale_id:0;
+            $time=isset($request->time)?$request->time:'';
+            
+            $time=date('H:i:00',strtotime($time));
+            $newdate=$date.' '.$time;
 
-            $scheduledata=explode("-",$data['time']);
-            $sale_id=isset($scheduledata[0])?$scheduledata[0]:0;
-
-            $schedule_time=isset($scheduledata[1])?$scheduledata[1]:'';
-            $schedule_time=date('H:i:00',strtotime($schedule_time));
-            $newdate=$date.' '.$schedule_time;
-
-            $availabiletime=saleAvailability($newdate,$sale_id,$schedule_time);
+            $availabiletime=$this->saleAvailability($newdate,$sale_id,$time);
             if($availabiletime=='true'){
               $scheduleArray=array('status'=>config('constants.PENDING'),'sale_id'=>$sale_id,'user_id'=>$user_id,'datetime'=>$newdate);
               Schedule::create($scheduleArray);
@@ -216,13 +214,8 @@ class Schedules extends Controller
           ->where('is_active',true)
           ->pluck('name','id');
 
-        $sale_id=isset($schedule->sale_id)?$schedule->sale_id:0;
         $datetime=isset($schedule->datetime)?$schedule->datetime:'';
-        $selected_date='';
-        if($datetime!='' && $sale_id !=''){
-          $selected_date=$sale_id.'-'. date('h:i A', strtotime($datetime));
-        }
-        return view('admin.schedule.form', compact('schedule','users','sales','selected_date'));
+        return view('admin.schedule.form', compact('schedule','users','sales','datetime'));
     }
 
     /**
@@ -247,14 +240,26 @@ class Schedules extends Controller
             
             $date=isset($request->date)?$request->date:date(config('constants.MYSQL_STORE_DATE_FORMAT'));
             $date=date(config('constants.MYSQL_STORE_DATE_FORMAT'),strtotime($date));
-            $time=isset($request->time)?$request->time:date("H:i:00");
-            $data['datetime']=$date." ".$time;  
-            $data['status']=$schedule->status;
-            $schedule->update($data);
+
+            $user_id=isset($request->user_id)?$request->user_id:0;
+            $sale_id=isset($request->sale_id)?$request->sale_id:0;
+            $time=isset($request->time)?$request->time:'';
             
-            $request->session()->flash('success',__('global.messages.update'));
+            $time=date('H:i:00',strtotime($time));
+            $newdate=$date.' '.$time;
+
+            $selected_date=isset($schedule->datetime)?$schedule->datetime:'';
+           
+            $availabiletime=$this->saleAvailability($newdate,$sale_id,$time,$selected_date);
+            if($availabiletime=='true'){
+              $scheduleArray=array('status'=>config('constants.PENDING'),'sale_id'=>$sale_id,'user_id'=>$user_id,'datetime'=>$newdate);
+               $schedule->update($scheduleArray);
+               $request->session()->flash('success',__('global.messages.update'));
+            }else{
+              $request->session()->flash('danger',__('Sale Time Not Availabile.'));
+            }
             return redirect()->route('admin.schedules.index');
-        }else {
+        }else{
             return redirect()->back()->withErrors($validator)->withInput();
         }
     }
@@ -281,8 +286,11 @@ class Schedules extends Controller
       
         $date=isset($request->date)?$request->date:'';
         $selected_date=isset($request->selected_date)?$request->selected_date:'';
-
-        
+        $selected_time='';
+        if($selected_date!=''){
+          $selected_time=date('h:i A', strtotime($selected_date));
+        }
+       
         $date=date('Y-m-d',strtotime($date));
         $sale_id=isset($request->sale_id)?$request->sale_id:0;
         if(intval($sale_id) > 0 && $date!=''){
@@ -299,13 +307,13 @@ class Schedules extends Controller
               while($opentime < $closetime){
                   $time=date('H:i:00', $opentime);
                   $newdate=$date.' '.$time;
-                      $times=saleAvailability($newdate,$sale_id,$time);
+                      $times=$this->saleAvailability($newdate,$sale_id,$time,$selected_date);
+                      $select='';
                       if($times=='true'){
-                          $select='';
-                          // if(isset($selected_date)==$sale_id.'-'. date('h:i A', $opentime)){
-                          //   $select='selected';
-                          // }
-                          $html.= '<option '.$select.' value="'.$sale_id.'-'. date('h:i A', $opentime) .'">' . date('h:i A', $opentime) . '</option>';
+                          if($selected_time==date('h:i A', $opentime)){
+                            $select='selected';
+                          }
+                          $html.= '<option '.$select.' value="'.date('h:i A', $opentime) .'">' . date('h:i A', $opentime) . '</option>';
                         
                       }
                   $opentime = strtotime('+15 minutes', $opentime);
@@ -316,4 +324,41 @@ class Schedules extends Controller
         
         }
     }
+
+
+    /**
+     * Show the application getstatetocity.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+
+    function saleAvailability($date=null,$sale_id=null,$time=null,$selected_date=''){
+        $holidays=Holiday::where('date', '=',$date)->where('is_active',true)->first();
+        if(isset($holidays)){
+            return 'false ';
+        }else{
+            $user=User::where('id',$sale_id)->first();
+            $time_id=isset($user->time_id)?$user->time_id:0;
+            $breack_time = date("H:i:s",strtotime('+1 minutes', strtotime($time)));
+            //$times=Time::where('id',$time_id)->where('is_active',true)->whereRaw("('$time' BETWEEN start_time AND  end_time)")->whereRaw("('$breack_time' NOT BETWEEN break_start_time AND  break_end_time)")->first();
+            $times=Time::where('id',$time_id)->whereRaw("('$time' BETWEEN start_time AND  end_time)")->whereRaw("CASE WHEN IFNULL(break_start_time,'')!='' THEN ('$breack_time' NOT BETWEEN break_start_time AND break_end_time) ELSE 1 END")->first();
+            if(isset($times)){
+                $records=Schedule::where('datetime', '=',$date)->where('sale_id',$sale_id)->first();
+                if(isset($records)){
+                    if($selected_date!=''){
+                        if($date==$selected_date){
+                          return 'true';
+                        }
+                    }
+                    return 'false';
+                }else{
+                    return 'true';
+                }
+            }else{
+                return 'false ';
+            }
+        }
+    }
+
+
 }

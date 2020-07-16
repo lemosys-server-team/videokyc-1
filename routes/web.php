@@ -84,6 +84,8 @@ Route::group(['middleware' => ['auth']], function(){
         Route::resource('kyc','Kyc');
         Route::post('kyc/getkyc', 'Kyc@getkyc')->name('kyc.getkyc');
         Route::get('kycs/twilio', 'Kyc@twilio')->name('kyc.twilio');
+        Route::get('kyc/declined/{id}', 'Kyc@declined')->name('kyc.declined');
+        Route::get('kyc/accepted/{id}', 'Kyc@accepted')->name('kyc.accepted');
 
         Route::resource('times','Times');
         Route::post('times/getTimes', 'Times@getTimes')->name('times.getTimes');

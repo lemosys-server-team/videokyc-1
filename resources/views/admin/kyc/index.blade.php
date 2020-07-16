@@ -72,6 +72,7 @@
                           <th>SS03</th>
                           <th>Status</th>
                           <th>KYC Status</th>
+                          <th>Admin Status</th>
                           <th>Action</th>                          
                         </tr>
                     </thead>
@@ -88,6 +89,7 @@
                           <th>SS03</th>
                           <th>Status</th>
                           <th>KYC Status</th>
+                          <th>Admin Status</th>
                           <th>Action</th>                        
                         </tr>
                     </tfoot>
@@ -170,6 +172,7 @@ function getkyc(){
           {data: 'ss03', name: 'ss03'},
           {data: 'final_status', name: 'final_status'},
           {data: 'kyc_status', name: 'kyc_status'},
+          {data: 'admin_by_status', name: 'admin_by_status',"width": "5%"},
           {data: 'action', name: 'action', orderable: false, searchable: false, "width": "2%"},            
       ],           
       order: [[2, 'desc']],

@@ -37,7 +37,7 @@ class StateController extends Controller
             ->addColumn('action', function ($state) {
                 return
                     // edit
-                    '<a href="'.route('admin.states.edit',[$state->id]).'" class="btn btn-success btn-circle btn-sm"><i class="fas fa-edit"></i></a> '.
+                    '<a href="'.route('admin.states.edit',[$state->id]).'" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a> '.
                     // Delete
                     Form::open(array(
                         'style' => 'display: inline-block;',

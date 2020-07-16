@@ -151,7 +151,7 @@ jQuery(document).ready(function(){
 function times(){
      var sale_id=$('#sale_id').val();
      var date=$('#date').val();
-     var selected_date='<?php echo isset($selected_date)&&$selected_date!=''?$selected_date:'' ?>'; 
+     var selected_date='<?php echo isset($datetime)&&$datetime!=''?$datetime:'' ?>'; 
      
      $.ajax({
             type : "POST",

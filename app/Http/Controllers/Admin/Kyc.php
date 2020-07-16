@@ -110,12 +110,27 @@ class Kyc extends Controller
                 }
                 return '';
             })
-            ->addColumn('action', function ($schedule) {
-                return
-                    // edit
-                    '<a href="'.route('admin.kyc.show',[$schedule->id]).'" class="btn btn-success btn-circle btn-sm"><i class="fa fa-eye"></i></a>';
+            ->editColumn('admin_by_status', function ($schedule) {
+                  $html='';
+                    if($schedule->admin_by_status==''){
+                        $html.='<a href="'.route('admin.kyc.declined',[$schedule->id]).'" class="btn btn-danger btn-sm"><i class="fa fa-times"></i></a> <a href="'.route('admin.kyc.accepted',[$schedule->id]).'" class="btn btn-success btn-circle btn-sm"><i class="fa fa-check"></i></a>';
+
+                    }else{
+                        if($schedule->admin_by_status=='accepted'){
+                            $html.='<span class="badge badge-success">Accepted</span>';
+                        }else{
+                             $html.='<span class="badge badge-danger">Rejected</span>';
+                        }
+                       
+                    }
+                    return  $html;
             })
-            ->rawColumns(['image_pen','action','image_photo','ss01','ss02','ss03'])
+            ->addColumn('action', function ($schedule) {
+                   // edit
+                    return '<a href="'.route('admin.kyc.show',[$schedule->id]).'" class="btn btn-warning btn-circle btn-sm"><i class="fa fa-eye"></i></a>';
+            })
+            
+            ->rawColumns(['admin_by_status','image_pen','action','image_photo','ss01','ss02','ss03'])
             ->make(true);
     }
 
@@ -135,6 +150,44 @@ class Kyc extends Controller
       }
       return view('admin.kyc.show', compact('schedule','videourl'));
     }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function declined(Request $request, $schedule_id){
+      $schedule = Schedule::where('id',$schedule_id)->first();
+      if(isset($schedule)){
+         $schedule->update(['admin_by_status'=>'rejected']);
+         $request->session()->flash('success',__('Kyc Rejected Successfully.'));
+      }else{
+         $request->session()->flash('success',__('Kyc Rejected Faild.'));
+      }
+      return redirect()->route('admin.kyc.index');
+     
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function accepted(Request $request,$schedule_id){
+      $schedule = Schedule::where('id',$schedule_id)->first();
+      if(isset($schedule)){
+         $schedule->update(['admin_by_status'=>'accepted']);
+         $request->session()->flash('success',__('Kyc Accepted Successfully.'));
+      }else{
+         $request->session()->flash('success',__('Kyc Accepted Faild.'));
+      }
+      return redirect()->route('admin.kyc.index');
+     
+    }
+
+    
 
       /**
      * Display the specified resource.

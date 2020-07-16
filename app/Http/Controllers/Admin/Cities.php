@@ -58,7 +58,7 @@ class Cities extends Controller
             ->addColumn('action', function ($city) {
                 return
                     // edit
-                    '<a href="'.route('admin.cities.edit',[$city->id]).'" class="btn btn-success btn-circle btn-sm"><i class="fas fa-edit"></i></a> '.
+                    '<a href="'.route('admin.cities.edit',[$city->id]).'" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a> '.
                     // Delete
                     Form::open(array(
                         'style' => 'display: inline-block;',
