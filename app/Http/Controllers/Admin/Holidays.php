@@ -152,6 +152,23 @@ class Holidays extends Controller
         }
     }
 
+     /**
+     * Change status the specified resource from storage.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function status($holiday_id){
+      $holiday = Holiday::findOrFail($holiday_id);
+      if(isset($holiday->is_active) && $holiday->is_active==FALSE){
+          $holiday->update(['is_active'=>TRUE]);
+          session()->flash('success',__('global.messages.activate'));
+      }else{
+          $holiday->update(['is_active'=>FALSE]);
+          session()->flash('danger',__('global.messages.deactivate'));
+      }
+      return redirect()->route('admin.holidays.index');
+    }
+
 
     /**
      * Remove the specified resource from storage.

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use App\Schedule;
+use App\Holiday;
+use App\Time;
 use Validator;
 use Auth;
 use DataTables;
@@ -87,17 +89,22 @@ class Schedules extends Controller
                 $query->whereRaw("LOWER(DATE_FORMAT(datetime,'".config('constants.MYSQL_STORE_TIME_FORMAT')."')) like ?", ["%$keyword%"]);
             })
             ->addColumn('action', function ($schedule) {
-                return
-                    // edit
-                    '<a href="'.route('admin.schedules.show',[$schedule->id]).'" class="btn btn-success btn-circle btn-sm"><i class="fa fa-eye"></i></a> <a href="'.route('admin.schedules.edit',[$schedule->id]).'" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a> '.
-                    // Delete
-                      Form::open(array(
+                
+                      $action = '<a href="'.route('admin.schedules.show',[$schedule->id]).'" class="btn btn-success btn-circle btn-sm"><i class="fa fa-eye"></i></a> ';
+
+                      if($schedule->status == config('constants.PENDING')){
+                        $action .='<a href="'.route('admin.schedules.edit',[$schedule->id]).'" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a> ';
+                      }
+                    
+                      $action .= Form::open(array(
                                   'style' => 'display: inline-block;',
                                   'method' => 'DELETE',
                                    'onsubmit'=>"return confirm('Do you really want to delete?')",
                                   'route' => ['admin.schedules.destroy', $schedule->id])).
                       ' <button type="submit" class="btn btn-danger btn-circle btn-sm"><i class="fas fa-trash"></i></button>'.
                       Form::close();
+
+                return $action;
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -122,7 +129,14 @@ class Schedules extends Controller
           })
           ->where('is_active',true)
           ->pluck('name','id');
-        return view('admin.schedule.form', compact('users','sales'));
+
+        $holidays=Holiday::where(['is_active'=>TRUE])->pluck('date')->toArray();
+        $holiday='';
+        if(!empty($holidays)){
+            $date=implode(' ', $holidays);
+            $holiday= json_encode(str_replace(' ', ',', $date));
+        }
+        return view('admin.schedule.form', compact('users','sales','holiday'));
     }
 
     /**
@@ -145,11 +159,24 @@ class Schedules extends Controller
             $data = $request->all();
             $date=isset($request->date)?$request->date:date(config('constants.MYSQL_STORE_DATE_FORMAT'));
             $date=date(config('constants.MYSQL_STORE_DATE_FORMAT'),strtotime($date));
-            $time=isset($request->time)?$request->time:date("H:i:00");
-            $data['datetime']=$date." ".$time;  
-            $data['status']=config('constants.PENDING');
-            Schedule::create($data);
-            $request->session()->flash('success',__('global.messages.add'));
+
+            $user_id=isset($request->user_id)?$request->user_id:0;
+
+            $scheduledata=explode("-",$data['time']);
+            $sale_id=isset($scheduledata[0])?$scheduledata[0]:0;
+
+            $schedule_time=isset($scheduledata[1])?$scheduledata[1]:'';
+            $schedule_time=date('H:i:00',strtotime($schedule_time));
+            $newdate=$date.' '.$schedule_time;
+
+            $availabiletime=saleAvailability($newdate,$sale_id,$schedule_time);
+            if($availabiletime=='true'){
+              $scheduleArray=array('status'=>config('constants.PENDING'),'sale_id'=>$sale_id,'user_id'=>$user_id,'datetime'=>$newdate);
+              Schedule::create($scheduleArray);
+              $request->session()->flash('success',__('global.messages.add'));
+            }else{
+              $request->session()->flash('danger',__('Sale Time Not Availabile.'));
+            }
             return redirect()->route('admin.schedules.index');
         }else{
             return redirect()->back()->withErrors($validator)->withInput();
@@ -188,7 +215,14 @@ class Schedules extends Controller
           })
           ->where('is_active',true)
           ->pluck('name','id');
-        return view('admin.schedule.form', compact('schedule','users','sales'));
+
+        $sale_id=isset($schedule->sale_id)?$schedule->sale_id:0;
+        $datetime=isset($schedule->datetime)?$schedule->datetime:'';
+        $selected_date='';
+        if($datetime!='' && $sale_id !=''){
+          $selected_date=$sale_id.'-'. date('h:i A', strtotime($datetime));
+        }
+        return view('admin.schedule.form', compact('schedule','users','sales','selected_date'));
     }
 
     /**
@@ -236,5 +270,50 @@ class Schedules extends Controller
       $schedule->delete();
       session()->flash('danger',__('global.messages.delete'));
       return redirect()->route('admin.schedules.index');
+    }
+
+    /**
+     * Show the application getstatetocity.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function getScheduleTimes(Request $request){
+      
+        $date=isset($request->date)?$request->date:'';
+        $selected_date=isset($request->selected_date)?$request->selected_date:'';
+
+        
+        $date=date('Y-m-d',strtotime($date));
+        $sale_id=isset($request->sale_id)?$request->sale_id:0;
+        if(intval($sale_id) > 0 && $date!=''){
+            $sale=User::where('id',$sale_id)->first()->toArray();
+            $time_id=isset($sale['time_id'])?$sale['time_id']:'';
+
+            $start_time=Time::where('id',$time_id)->where('is_active',TRUE)->min('start_time');
+            $end_time=Time::where('id',$time_id)->where('is_active',TRUE)->max('end_time');
+
+            if($start_time!='' && $end_time!=''){
+              $opentime = strtotime($start_time);
+              $closetime = strtotime($end_time);
+              $html='';
+              while($opentime < $closetime){
+                  $time=date('H:i:00', $opentime);
+                  $newdate=$date.' '.$time;
+                      $times=saleAvailability($newdate,$sale_id,$time);
+                      if($times=='true'){
+                          $select='';
+                          // if(isset($selected_date)==$sale_id.'-'. date('h:i A', $opentime)){
+                          //   $select='selected';
+                          // }
+                          $html.= '<option '.$select.' value="'.$sale_id.'-'. date('h:i A', $opentime) .'">' . date('h:i A', $opentime) . '</option>';
+                        
+                      }
+                  $opentime = strtotime('+15 minutes', $opentime);
+              }
+              return response()->json($html);
+
+            }
+        
+        }
     }
 }

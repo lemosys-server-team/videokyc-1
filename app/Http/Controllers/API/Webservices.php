@@ -59,7 +59,8 @@ class Webservices extends Controller
             return response()->json(['status'=>false,'message'=>$validator->errors()->first()]);
         }    
         $data=$request->all();  
-        $user = Schedule::with('user')->where('sale_id',$data['sale_id'])->get();
+        $current_date=date("Y-m-d");
+        $user = Schedule::with('user')->where('sale_id',$data['sale_id'])->whereDate('datetime', '=', $current_date)->get();
         if($user->count() > 0){ 
             $response=array('status'=>true,'message'=>'Records.','response'=>$user);
         }else{
@@ -78,6 +79,7 @@ class Webservices extends Controller
         $rules =   ['schedule_date' => 'required',
                     'user_id' => 'required',
                     'final_status' => 'required',
+                    'face_status' => 'required',
                     'image_pen'=>['required',
                               'file',
                               'image'],
@@ -132,6 +134,10 @@ class Webservices extends Controller
                 }
                 $data['image_photo'] = $image_photo;
             }
+
+            $data['status']=config('constants.COMPLETED');
+            $data['final_status']= isset($data['final_status'])?$data['final_status']:'';
+            $data['kyc_status']= isset($data['face_status'])?$data['face_status']:'';
             $schedule->update($data);
 
             $response=array('status'=>true,'message'=>'Document uploaded Successfully.');
@@ -144,12 +150,15 @@ class Webservices extends Controller
 
      /**
      * delete users notification
+     /**
+     * delete users notification
      *
      * @return [string] message
     */
     public function uploadDocumentBysale(Request $request){
 
        $rules =   ['schedule_id' => 'required',
+                   'room_id'=>'required',    
                    /* 'user_id' => 'required',*/
                     'ss01'=>['required',
                               'file',
@@ -160,6 +169,7 @@ class Webservices extends Controller
                     'ss03'=>['required',
                             'file',
                             'image']
+
                    ];
         
         $validator = Validator::make($request->all(), $rules);   
@@ -207,6 +217,8 @@ class Webservices extends Controller
                 }
                 $data['ss03'] = $ss03;
             }
+            $data['twilio_room_id'] = isset($data['room_id'])?$data['room_id']:'';
+            $data['status']=config('constants.COMPLETED');
             $schedule->update($data);
 
             $response=array('status'=>true,'message'=>'Document uploaded Successfully.');

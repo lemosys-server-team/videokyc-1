@@ -196,6 +196,23 @@ class Times extends Controller
         }
     }
 
+     /**
+     * Change status the specified resource from storage.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function status($time_id){
+      $time = Time::findOrFail($time_id);
+      if(isset($time->is_active) && $time->is_active==FALSE){
+          $time->update(['is_active'=>TRUE]);
+          session()->flash('success',__('global.messages.activate'));
+      }else{
+          $time->update(['is_active'=>FALSE]);
+          session()->flash('danger',__('global.messages.deactivate'));
+      }
+      return redirect()->route('admin.times.index');
+    }
+
 
     /**
      * Remove the specified resource from storage.

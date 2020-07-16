@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use App\Schedule;
+use Twilio\Jwt\AccessToken;
+use Twilio\Jwt\Grants\VideoGrant;
+use Twilio\Rest\Client;
 use Validator;
 use Auth;
 use DataTables;
@@ -46,7 +49,7 @@ class Kyc extends Controller
      */
     public function getkyc(Request $request){
         
-        $schedules=Schedule::with('user','sale')->select([\DB::raw(with(new Schedule)->getTable().'.*')])->groupBy('id');
+        $schedules=Schedule::with('user','sale')->select([\DB::raw(with(new Schedule)->getTable().'.*')])->where('status',config('constants.COMPLETED'))->groupBy('id');
 
         $sale_id = intval($request->input('sales_id'));
         if($sale_id > 0) 
@@ -67,11 +70,14 @@ class Kyc extends Controller
             ->editColumn('datetime', function($schedule){
                 return date(config('constants.DATE_FORMAT').' @ '.config('constants.TIME_FORMAT') , strtotime($schedule->datetime));
             })            
-            ->editColumn('status', function ($schedule) {
-               return ucwords($schedule->final_status);
-            })
             ->editColumn('final_status', function ($schedule) {
+               return ucwords(isset($schedule->final_status)?$schedule->final_status:'');
+            })
+            ->editColumn('image_adhar', function ($schedule) {
                return 'Xml file save in backend';
+            })
+            ->editColumn('kyc_status', function ($schedule) {
+              return ucwords(isset($schedule->kyc_status)?$schedule->kyc_status:'');
             })
             ->editColumn('image_pen', function ($schedule) {
                 if (isset($schedule->image_pen) && $schedule->image_pen!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_pen)) {
@@ -122,7 +128,12 @@ class Kyc extends Controller
      */
     public function show($schedule_id){
       $schedule = Schedule::with('user','sale')->where('id',$schedule_id)->first();
-      return view('admin.kyc.show', compact('schedule'));
+      $twilio_room_id=isset($schedule['twilio_room_id'])?$schedule['twilio_room_id']:'';
+      $videourl='';
+      if($twilio_room_id !=''){
+          $videourl=$this->twilioVideo($twilio_room_id);
+      }
+      return view('admin.kyc.show', compact('schedule','videourl'));
     }
 
       /**
@@ -131,7 +142,7 @@ class Kyc extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function twilio($schedule_id=null){
+    public function twilioVideo($twilio_room_id=null){
         $sid    = "AC9c4946e7297ef20525589bab03294be4";
         $token  = "3e25eb6bc857461b68d72d839642fd69";
         $twilio = new Client($sid, $token);
@@ -139,24 +150,25 @@ class Kyc extends Controller
         // $room = $twilio->video->v1->rooms("RM75976f7a4f963c96ca7588b71217f869")
         //                           ->fetch();
         //                           echo "<pre>";
-
         //                           print_r($room);die;
 
         $recordings = $twilio->video->v1->recordings
-        ->read(["groupingSid" => ["RM5ad47819cf5be9fdab983b988b205483"],
+        ->read(["groupingSid" => [$twilio_room_id],
                 "type"=>'video'],2
         );
-        $test='';
+        $recordings_id='';
         foreach ($recordings as $record) {
-            if($record->type=='audio'){
-                $test=$record->sid;
+            if($record->type=='video'){
+                $recordings_id=$record->sid;
             }
         }
-        $recordingSid = $test;
-        $uri = "https://video.twilio.com/v1/Recordings/$recordingSid/Media";
-        $response = $twilio->request("GET", $uri);
-        $mediaLocation = $response->getContent()["redirect_to"];
-        print_r($mediaLocation);die;
-        die;
+        if($recordings_id!=''){
+            $uri = "https://video.twilio.com/v1/Recordings/$recordings_id/Media";
+            $response = $twilio->request("GET", $uri);
+            $mediaLocation = $response->getContent()["redirect_to"];
+            return $mediaLocation;
+        }else{
+             return $recordings_id;
+        }
     }
 }

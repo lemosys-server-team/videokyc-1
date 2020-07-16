@@ -35,6 +35,8 @@
                                 <span><b>User   :</b>  {{ isset($schedule->user->name)?$schedule->user->name:'' }} </span>
                                 <br>
                                 <span><b>Status  :</b>  {{ isset($schedule->final_status)?$schedule->final_status:'' }} </span>
+                                <br>
+                                 <span><b>Video :</b>  <a href="{{ isset($videourl)?$videourl:'' }}" ><li class="fa fa-download"></li></a>   </span>
                             </div>
                         </div>
                     </div>

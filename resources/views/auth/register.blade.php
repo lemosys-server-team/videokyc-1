@@ -32,7 +32,7 @@
                       <div class="main-signup-header">
                        <!-- <h2>Welcome back!</h2> -->
                         <h5 class="font-weight-semibold mb-4">Kindly fill the registration form for Digital KYC</h5>
-                        @if($flash = session('error'))            
+                          @if($flash = (session('error') ?: session('danger')))               
                           <div class="alert alert-danger alert-dismissible" role="alert">
                               <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
                                {{ $flash }}
@@ -143,7 +143,7 @@
 <script type="text/javascript" src="{{ asset('js/jquery-validation/dist/jquery.validate.min.js') }}"></script>
 <script type="text/javascript">
 
-var dates = <?php echo isset($holiday)?$holiday:'' ?>;
+var dates = <?php echo isset($holiday)&&$holiday!=''?$holiday:'[]' ?>;
 function DisableDates(date) {
   var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
   return [dates.indexOf(string) == -1];

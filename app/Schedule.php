@@ -13,7 +13,7 @@ class Schedule extends Model
      * @var array
      */
     protected $fillable = [
-        'sale_id','user_id','status','datetime','image_photo','image_adhar','image_pen','ss01','ss02','ss03','duration','final_status'
+        'sale_id','user_id','status','datetime','image_photo','image_adhar','image_pen','ss01','ss02','ss03','duration','final_status','admin_by_status','kyc_status','twilio_room_id'
     ];
 
     public function user(){

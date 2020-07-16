@@ -87,11 +87,11 @@ class HomeController extends Controller
 		            $request->session()->flash('success',__('Details Submitted Successfully.'));
 		            return redirect()->back();
                 }else{
- 				 	$request->session()->flash('success',__('Sale Time Not Availabile.'));
+ 				 	$request->session()->flash('danger',__('Sale Time Not Availabile.'));
  				  	return redirect()->back()->withInput();
                 }
             }else{
-            	$request->session()->flash('success',__('User Registration Faild.'));
+            	$request->session()->flash('danger',__('User Registration Faild.'));
             	return redirect()->back();
             }
         }else{
