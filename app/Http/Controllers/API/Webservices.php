@@ -79,7 +79,7 @@ class Webservices extends Controller
         $rules =   ['schedule_date' => 'required',
                     'user_id' => 'required',
                     'final_status' => 'required',
-                    'kyc_status' => 'required',
+                    'face_status' => 'required',
                     'image_pen'=>['required',
                               'file',
                               'image'],
@@ -137,7 +137,7 @@ class Webservices extends Controller
 
             $data['status']=config('constants.COMPLETED');
             $data['final_status']= isset($data['final_status'])?$data['final_status']:'';
-            $data['kyc_status']= isset($data['kyc_status'])?$data['kyc_status']:'';
+            $data['kyc_status']= isset($data['face_status'])?$data['face_status']:'';
             $schedule->update($data);
 
             $response=array('status'=>true,'message'=>'Document uploaded Successfully.');
