@@ -82,13 +82,14 @@
           @if($flash = (session('error') ?: session('danger')))            
               <div class="alert alert-danger alert-dismissible bg-danger-gradient" role="alert">
                   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                   {{ $flash }}
+                  <span style="color: white;"> {{ $flash }}</span>
+                  
               </div>
           @endif
           @if($flash = session('success'))      
               <div class="alert alert-success alert-dismissible bg-success-gradient" role="alert">
                   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                   {{ $flash }}
+                   <span style="color: white;"> {{ $flash }}</span>
               </div>
           @endif
         </div>
