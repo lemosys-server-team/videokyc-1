@@ -62,11 +62,15 @@ class AuthController extends Controller
         }    
         $data=$request->all();  
         $type=$data['type'];
-        $user = User::whereHas('roles', function($query) use ($type){
-          $query->where('id', $type);
-        })->where(array('mobile_number'=>$data['mobile_number']))->first();
-        
-
+        if($type==config('constants.ROLE_TYPE_SALES_ID')){
+            $user = User::whereHas('roles', function($query) use ($type){
+              $query->where('id', $type);
+            })->where(array('mobile_number'=>$data['mobile_number'],'password'=>Hash::make($data['otp'])))->first();
+        }else{
+            $user = User::whereHas('roles', function($query) use ($type){
+              $query->where('id', $type);
+            })->where(array('mobile_number'=>$data['mobile_number'])))->first();
+        }
         if($user){
              // For store access token of user
             $tokenResult = $user->createToken('Login Token');
