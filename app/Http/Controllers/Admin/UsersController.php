@@ -38,7 +38,7 @@ class UsersController extends Controller
        
           $users=User::with('roles')
           ->whereHas('roles', function($query){
-            $query->where('id','!=' ,config('constants.ROLE_TYPE_SUPERADMIN_ID'));
+            $query->where('id',config('constants.ROLE_TYPE_SALES_ID'));
           })->select([\DB::raw(with(new User)->getTable().'.*')])->groupBy('id');
         
 
@@ -201,20 +201,19 @@ class UsersController extends Controller
             'profile_picture'   => 'image'
         ];
        
-       /* if (isset($request->reset_password) && $request->reset_password==TRUE) {
+        if (isset($request->reset_password) && $request->reset_password==TRUE) {
             $rules['password'] = 'required|confirmed';
-        }*/
+        }
 
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $request->all();
-/*
+
             if (isset($request->reset_password) && $request->reset_password==TRUE) {
                 $data['password'] = Hash::make($request->password);
             }else{
                 unset($data['password']);
-            }*/
-
+            }
             if ($request->hasFile('profile_picture')){
                 $file = $request->file('profile_picture');
                 $customimagename  = time() . '.' . $file->getClientOriginalExtension();
@@ -306,7 +305,7 @@ class UsersController extends Controller
         $user->forceDelete();
     }
     session()->flash('danger',__('global.messages.delete'));
-    return redirect()->route('admin.users.index');
+    return redirect()->back();
     }
 
 }

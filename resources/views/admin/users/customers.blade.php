@@ -12,7 +12,7 @@
   <div class="breadcrumb-header justify-content-between">
       <div class="left-content">
           <div>
-            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Sales</h2>
+            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Customres</h2>
           </div>
       </div>
   </div>
@@ -20,15 +20,19 @@
     <div class="col-xl-12">
       <div class="card">
         <div class="card-header py-3 cstm_hdr">
-            <h6 class="m-0 font-weight-bold text-primary">Sales List</h6>
-            <a href="{{route('admin.users.create')}}" class="btn btn-sm btn-icon-split float-right btn-outline-warning">
-                <span class="icon text-white-50">
-                  <i class="fas fa-plus"></i>
-                </span>
-                <span class="text">Add Sales</span>
-            </a>
+            <h6 class="m-0 font-weight-bold text-primary">Customres List</h6>
         </div>
         <div class="card-body">
+         <!--  <div class="well mb-3">
+                {!! Form::open(['method' => 'POST', 'class' => 'form-inline', 'id' => 'frmFilter']) !!}
+                <div class="form-group mr-sm-2 mb-2">
+                    {!! Form::select('role_id', $roles, old('role_id'), ['id'=>'role_id', 'class' => 'form-control', 'placeholder' => '-Select Type-']) !!}                   
+                </div>   
+
+                <button type="submit" class="btn btn-responsive btn-primary mr-sm-2 mb-2">{{ __('Filter') }}</button>
+                <a href="javascript:;" onclick="resetFilter();" class="btn btn-responsive btn-danger mb-2">{{ __('Reset') }}</a>
+                {!! Form::close() !!}
+            </div> --> 
             <div class="table-responsive">
                 <table class="table table-bordered" width="100%" cellspacing="0" id="users">
                     <thead>
@@ -37,7 +41,6 @@
                           <th>Email</th>
                           <th>Mobile</th>                          
                           <th>Registration Date</th>
-                          <th>Status</th>
                           <th>Action</th>                          
                         </tr>
                     </thead>
@@ -47,7 +50,6 @@
                           <th>Email</th>
                           <th>Mobile</th>                          
                           <th>Registration Date</th>
-                          <th>Status</th>
                           <th>Action</th>                         
                         </tr>
                     </tfoot>
@@ -94,7 +96,7 @@ function getUsers(){
       serverSide: true,
       iDisplayLength:50,
       ajax: {
-          url: '{{ route('admin.users.getUsers') }}',
+          url: '{{ route('admin.users.getCustomers') }}',
           method: 'POST',
           data: {  
                role_id:role_id   
@@ -110,7 +112,6 @@ function getUsers(){
           {data: 'email', name: 'email'},    
           {data: 'mobile_number', name: 'mobile_number'}, 
           {data: 'created_at', name: 'created_at'},
-          {data: 'is_active', name: 'is_active', class: 'text-center', "width": "5%"},
           {data: 'action', name: 'action', orderable: false, searchable: false, "width": "10%"},            
       ],           
       order: [[0, 'desc']],

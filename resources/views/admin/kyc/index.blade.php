@@ -70,10 +70,10 @@
                           <th>SS01</th>
                           <th>SS02</th>
                           <th>SS03</th>
-                          <th>Status</th>
                           <th>KYC Status</th>
+                          <th>Face Match Status</th>
                           <th>Admin Status</th>
-                          <th>Action</th>                          
+                          <th>Action</th>                         
                         </tr>
                     </thead>
                     <tfoot>
@@ -87,8 +87,8 @@
                           <th>SS01</th>
                           <th>SS02</th>
                           <th>SS03</th>
-                          <th>Status</th>
                           <th>KYC Status</th>
+                          <th>Face Match Status</th>
                           <th>Admin Status</th>
                           <th>Action</th>                        
                         </tr>
@@ -96,6 +96,20 @@
                 </table>
             </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" data-dismiss="modal">
+    <div class="modal-content" >
+      <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+          <img src="" class="imagepreview" style="width: 100%;" >
+      </div>
+      <div class="modal-footer">
       </div>
     </div>
   </div>
@@ -117,6 +131,7 @@
 <!-- export btn -->
 <script type="text/javascript">
 jQuery(document).ready(function(){
+
     getkyc();
     
     jQuery('#frmFilter').submit(function(){
@@ -183,5 +198,11 @@ function getkyc(){
       },        
     });
 }
+setInterval(function(){
+      $('.pop').on('click', function() {
+      $('.imagepreview').attr('src', $(this).find('img').attr('src'));
+      $('#imagemodal').modal('show');
+      });
+    }, 1000);
 </script>
 @endsection

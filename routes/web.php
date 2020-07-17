@@ -45,10 +45,12 @@ Route::group(['middleware' => ['auth']], function(){
         // For Users
 		Route::resources([
 			'users' => 'UsersController',
+			'customers' => 'CustomersControll',
 			'product_categories' => 'ProductCategories',
 		]);
 		
         Route::post('users/getUsers', 'UsersController@getUsers')->name('users.getUsers');
+        Route::post('users/getCustomers', 'CustomersControll@getCustomers')->name('users.getCustomers');
 		Route::get('users/status/{user_id}', 'UsersController@status')->name('users.status');	
 
 		// For product_categories sub_contractor
