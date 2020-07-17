@@ -126,6 +126,7 @@ class UsersController extends Controller
             'employee_id'       => 'required', 
             'name'              => 'required', 
             'email'             => 'required',
+            'password'          => 'required',
             'mobile_number'     => 'required|unique:'.with(new User)->getTable().',mobile_number',
             'profile_picture'   => 'image',
         ];
@@ -133,7 +134,7 @@ class UsersController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $request->all();
-            $data['password'] = Hash::make(123456);
+            $data['password'] = Hash::make($data['password']);
             if ($request->hasFile('profile_picture')){
                 $file = $request->file('profile_picture');
                 $customimagename  = time() . '.' . $file->getClientOriginalExtension();
