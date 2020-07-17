@@ -77,16 +77,16 @@
                  </div>
             </div>
 
-          <!--  <div class="form-group">
+           <div class="form-group">
                  <div class="col-md-6">
                     <label>
                         {{Form::checkbox('reset_password', TRUE, null,['id'=>'reset_password'])}}
                         {{ __('Reset Password') }}
                     </label>
                 </div>
-            </div> -->
+            </div>
 
-           <!--  <div  id="password_container">
+            <div  id="password_container">
                 <div class="form-group {{$errors->has('password') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
                     <label class="col-md-3 control-label" for="password">New Password <span style="color:red">*</span></label>
                     <div class="col-md-6">
@@ -105,18 +105,18 @@
                         @endif
                     </div>
                 </div>
-            </div> -->
-<!-- 
-            @php $profile_picture = $user->profile_picture; @endphp
+            </div>
+
+           <!--  @php $profile_picture = $user->profile_picture; @endphp
             @if(isset($profile_picture) && $profile_picture!=''  && \Storage::exists(config('constants.USERS_UPLOADS_PATH').$profile_picture)) 
             <div class="form-group">
                 <div class="col-md-6">
                     <img width="100" src="{{ \Storage::url(config('constants.USERS_UPLOADS_PATH').$profile_picture) }}">
                 </div>
             </div>
-            @endif
+            @endif -->
             
-            <div class="form-group {{$errors->has('profile_picture') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+            <!-- <div class="form-group {{$errors->has('profile_picture') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
                 <label class="col-md-3 control-label" for="title">Profile Picture </label>
                 <div class="col-md-6">
                      {{ Form::file('profile_picture') }}
@@ -171,7 +171,7 @@ jQuery(document).ready(function(){
             hours: {
                 required: true
             },
-            /*password: {
+            password: {
                 required: function(){
                     if(jQuery('#frmUser #reset_password').prop('checked')==false){
                         return false;
@@ -189,7 +189,7 @@ jQuery(document).ready(function(){
                     }
                 },
                 equalTo: "#password"
-            }*/
+            }
         }
     });
 });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
+use App\Schedule;
 
 
 
@@ -33,7 +34,10 @@ class DashboardController extends Controller
         $inactiveusers=User::with('roles')->whereHas('roles', function($query){
             $query->where('id','!=' ,config('constants.ROLE_TYPE_SUPERADMIN_ID'));
         })->where('is_active',false)->count(); 
-      return view('admin.dashboard.dashboard',compact('activeusers','inactiveusers'));
+        $schedules= new Schedule();
+        $schedule['completed']=$schedules->where('status','completed')->count();
+        $schedule['scheduled']=$schedules->count();
+      return view('admin.dashboard.dashboard',compact('activeusers','inactiveusers','schedule'));
     }
     
 }

@@ -81,32 +81,32 @@ class Kyc extends Controller
             })
             ->editColumn('image_pen', function ($schedule) {
                 if (isset($schedule->image_pen) && $schedule->image_pen!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_pen)) {
-                     return '<img width="100px"  height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_pen).'" />';
+                     return '<a href="javascript:void(0)" class="pop"><img width="100px"  height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_pen).'" /></a>';
                 }
                 return '';
             })
 
             ->editColumn('image_photo', function ($schedule) {
                 if (isset($schedule->image_photo) && $schedule->image_photo!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_photo)) {
-                     return '<img width="100px"  height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_photo).'" />';
+                     return '<a href="javascript:void(0)" class="pop"><img width="100px"  height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_USER').$schedule->image_photo).'" /></a>';
                 }
                 return '';
             })
             ->editColumn('ss01', function ($schedule) {
                 if (isset($schedule->ss01) && $schedule->ss01!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss01)) {
-                     return '<img width="100px" height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss01).'" />';
+                     return '<a href="javascript:void(0)" class="pop"><img width="100px" height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss01).'" /></a>';
                 }
                 return '';
             })
             ->editColumn('ss02', function ($schedule) {
                 if (isset($schedule->ss02) && $schedule->ss02!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss02)) {
-                     return '<img width="100px" height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss02).'" />';
+                     return '<a href="javascript:void(0)" class="pop"><img width="100px" height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss02).'" /></a>';
                 }
                 return '';
             })
             ->editColumn('ss03', function ($schedule) {
                 if (isset($schedule->ss03) && $schedule->ss03!='' && \Storage::exists(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss03)) {
-                     return '<img width="100px" height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss03).'" />';
+                     return '<a href="javascript:void(0)" class="pop"><img width="100px" height="100px" src="'.\Storage::url(config('constants.SCHEDULE_UPLOAD_PATH_SALES').$schedule->ss03).'" /></a>';
                 }
                 return '';
             })
@@ -205,7 +205,7 @@ class Kyc extends Controller
         //                           echo "<pre>";
         //                           print_r($room);die;
 
-        $recordings = $twilio->video->v1->recordings
+       /* $recordings = $twilio->video->v1->recordings
         ->read(["groupingSid" => [$twilio_room_id],
                 "type"=>'video'],2
         );
@@ -222,6 +222,6 @@ class Kyc extends Controller
             return $mediaLocation;
         }else{
              return $recordings_id;
-        }
+        }*/
     }
 }

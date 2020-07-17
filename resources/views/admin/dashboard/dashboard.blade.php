@@ -74,7 +74,7 @@
 										</div>
 										<span class="float-right my-auto ml-auto">
 											<!-- <i class="fas fa-arrow-circle-up text-white"></i> -->
-											<span class="text-white font-weight-bold tx-20">40</span>
+											<span class="text-white font-weight-bold tx-20">{{isset($schedule['scheduled'])?$schedule['scheduled']:0}}</span>
 										</span>
 									</div>
 								</div>
@@ -96,7 +96,7 @@
 										</div>
 										<span class="float-right my-auto ml-auto">
 											<!-- <i class="fas fa-arrow-circle-down text-white"></i> -->
-											<span class="text-white font-weight-bold tx-20">40</span>
+											<span class="text-white font-weight-bold tx-20">{{isset($schedule['completed'])?$schedule['completed']:0}}</span>
 										</span>
 									</div>
 								</div>
