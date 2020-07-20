@@ -83,7 +83,7 @@ class HomeController extends Controller
 
                     if ($user)
                         $user->notify(
-                            new OTPVerification($code)
+                            new OTPVerification($code,$request->mobile_number)
                         );
                     //assign user roles
                	    $user->assignRole(config('constants.ROLE_TYPE_USER_ID'));
