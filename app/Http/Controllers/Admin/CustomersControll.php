@@ -47,7 +47,7 @@ class CustomersControll extends Controller
     public function getCustomers(Request $request){
           $role_id = $request->input('role_id');
        
-          $users=User::with('roles')
+          $users=User::with(['roles','state','city'])
           ->whereHas('roles', function($query){
             $query->where('id','=' ,config('constants.ROLE_TYPE_USER_ID'));
           })->select([\DB::raw(with(new User)->getTable().'.*')])->groupBy('id');
@@ -59,26 +59,14 @@ class CustomersControll extends Controller
             });
 
         return DataTables::of($users)
-       
             ->editColumn('created_at', function($user){
                 return date(config('constants.DATE_FORMAT'), strtotime($user->created_at));
-            })            
-            ->addColumn('user_name', function($user){
-                return $user->name;
             })
-            ->addColumn('mobile_number', function($user){
-                return $user->mobile_number;
+            ->addColumn('state', function($user){
+                return isset($user->state->title)?$user->state->title:'';
             })
-            ->editColumn('email', function ($user) {
-              return $user->email;
-            })
-            ->filterColumn('mobile_number', function ($query, $keyword) {
-                $keyword = strtolower($keyword);
-                 $query->whereRaw("mobile_number like ?", ["%$keyword%"]);
-            })
-            ->filterColumn('user_name', function ($query, $keyword) {
-                $keyword = strtolower($keyword);
-                 $query->whereRaw('users.name like ?', ["%$keyword%"]);
+            ->addColumn('city', function($user){
+                return isset($user->city->title)?$user->city->title:'';
             })
             ->addColumn('action', function ($user) {
                 return

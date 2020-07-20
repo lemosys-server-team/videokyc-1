@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\OTPVerification;
 use App\User;
 use App\Time;
 use App\Schedule;
@@ -125,8 +126,8 @@ class UsersController extends Controller
             'time_id'           => 'required', 
             'employee_id'       => 'required', 
             'name'              => 'required', 
-            'email'             => 'required',
-            'password'          => 'required',
+            'email'             => 'required|email|unique:'.with(new User)->getTable().',email',
+           // 'password'          => 'required',
             'mobile_number'     => 'required|unique:'.with(new User)->getTable().',mobile_number',
             'profile_picture'   => 'image',
         ];
@@ -134,7 +135,6 @@ class UsersController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $request->all();
-            $data['password'] = Hash::make($data['password']);
             if ($request->hasFile('profile_picture')){
                 $file = $request->file('profile_picture');
                 $customimagename  = time() . '.' . $file->getClientOriginalExtension();
@@ -142,7 +142,15 @@ class UsersController extends Controller
                 $file->storeAs($destinationPath, $customimagename);
                 $data['profile_picture'] = $customimagename;
             }
+            $code = rand(100000,999999);
+            $data['password'] = Hash::make($code);
             $user = User::create($data);
+
+            if ($user)
+              $user->notify(
+                  new OTPVerification($code,$request->mobile_number)
+              );
+
             $user_id=$user->id;
             // assign user roles
             if (!empty($request->role_id)) {
@@ -197,24 +205,24 @@ class UsersController extends Controller
             'time_id'           => 'required', 
             'name'              => 'required', 
             'employee_id'       => 'required',  
-            'email'             => 'required',
+            'email'             => 'required|email|unique:'.with(new User)->getTable().',email,'.$user->getKey(),
             'mobile_number'     => 'required|unique:'.with(new User)->getTable().',mobile_number,'.$user->getKey(),
             'profile_picture'   => 'image'
         ];
        
-        if (isset($request->reset_password) && $request->reset_password==TRUE) {
-            $rules['password'] = 'required|confirmed';
-        }
+        // if (isset($request->reset_password) && $request->reset_password==TRUE) {
+        //     $rules['password'] = 'required|confirmed';
+        // }
 
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $request->all();
 
-            if (isset($request->reset_password) && $request->reset_password==TRUE) {
-                $data['password'] = Hash::make($request->password);
-            }else{
-                unset($data['password']);
-            }
+            // if (isset($request->reset_password) && $request->reset_password==TRUE) {
+            //     $data['password'] = Hash::make($request->password);
+            // }else{
+            //     unset($data['password']);
+            // }
             if ($request->hasFile('profile_picture')){
                 $file = $request->file('profile_picture');
                 $customimagename  = time() . '.' . $file->getClientOriginalExtension();

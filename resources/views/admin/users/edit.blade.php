@@ -77,7 +77,7 @@
                  </div>
             </div>
 
-           <div class="form-group">
+           <!-- <div class="form-group">
                  <div class="col-md-6">
                     <label>
                         {{Form::checkbox('reset_password', TRUE, null,['id'=>'reset_password'])}}
@@ -105,7 +105,7 @@
                         @endif
                     </div>
                 </div>
-            </div>
+            </div> -->
 
            <!--  @php $profile_picture = $user->profile_picture; @endphp
             @if(isset($profile_picture) && $profile_picture!=''  && \Storage::exists(config('constants.USERS_UPLOADS_PATH').$profile_picture)) 
@@ -142,9 +142,9 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
-    jQuery('#reset_password').change(function(){
-        resetPassword();
-    }).trigger('change');
+    // jQuery('#reset_password').change(function(){
+    //     resetPassword();
+    // }).trigger('change');
 
     $('.select2').select2({
         placeholder: 'Choose one',
@@ -171,33 +171,33 @@ jQuery(document).ready(function(){
             hours: {
                 required: true
             },
-            password: {
-                required: function(){
-                    if(jQuery('#frmUser #reset_password').prop('checked')==false){
-                        return false;
-                    }else{
-                        return true;
-                    }
-                }
-            },
-            password_confirmation: {
-                required: function(){  
-                    if(jQuery('#frmUser #reset_password').prop('checked')==false){
-                        return false;
-                    }else{
-                        return true;
-                    }
-                },
-                equalTo: "#password"
-            }
+            // password: {
+            //     required: function(){
+            //         if(jQuery('#frmUser #reset_password').prop('checked')==false){
+            //             return false;
+            //         }else{
+            //             return true;
+            //         }
+            //     }
+            // },
+            // password_confirmation: {
+            //     required: function(){  
+            //         if(jQuery('#frmUser #reset_password').prop('checked')==false){
+            //             return false;
+            //         }else{
+            //             return true;
+            //         }
+            //     },
+            //     equalTo: "#password"
+            // }
         }
     });
 });
-function resetPassword(){
-    jQuery('#password_container').hide();
-    if(jQuery('#reset_password').prop('checked')==true){
-        jQuery('#password_container').show();
-    }
-}
+// function resetPassword(){
+//     jQuery('#password_container').hide();
+//     if(jQuery('#reset_password').prop('checked')==true){
+//         jQuery('#password_container').show();
+//     }
+// }
 </script>
 @endsection

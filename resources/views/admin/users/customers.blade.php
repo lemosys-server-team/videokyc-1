@@ -12,7 +12,7 @@
   <div class="breadcrumb-header justify-content-between">
       <div class="left-content">
           <div>
-            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Customres</h2>
+            <h2 class="main-content-title tx-24 mg-b-1 mg-b-lg-1">Customers</h2>
           </div>
       </div>
   </div>
@@ -20,7 +20,7 @@
     <div class="col-xl-12">
       <div class="card">
         <div class="card-header py-3 cstm_hdr">
-            <h6 class="m-0 font-weight-bold text-primary">Customres List</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Customers List</h6>
         </div>
         <div class="card-body">
          <!--  <div class="well mb-3">
@@ -40,6 +40,8 @@
                           <th>Name</th>
                           <th>Email</th>
                           <th>Mobile</th>                          
+                          <th>State</th>
+                          <th>City</th>
                           <th>Registration Date</th>
                           <th>Action</th>                          
                         </tr>
@@ -49,6 +51,8 @@
                           <th>Name</th>
                           <th>Email</th>
                           <th>Mobile</th>                          
+                          <th>State</th>
+                          <th>City</th>                         
                           <th>Registration Date</th>
                           <th>Action</th>                         
                         </tr>
@@ -111,6 +115,8 @@ function getUsers(){
           {data: 'name', name: 'name'},
           {data: 'email', name: 'email'},    
           {data: 'mobile_number', name: 'mobile_number'}, 
+          {data: 'state', name: 'state.title'}, 
+          {data: 'city', name: 'city.title'}, 
           {data: 'created_at', name: 'created_at'},
           {data: 'action', name: 'action', orderable: false, searchable: false, "width": "10%"},            
       ],           

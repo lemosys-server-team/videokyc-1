@@ -65,5 +65,21 @@ class User extends Authenticatable
     }
 
 
+    /**
+     * Get the state for the blog post.
+     */
+    public function state()
+    {
+        return $this->belongsTo(State::class);
+    }
+
+    /**
+     * Get the city for the blog post.
+     */
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
    
 }

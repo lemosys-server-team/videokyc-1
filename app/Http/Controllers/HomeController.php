@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\OTPVerification;
 use App\User;
 use App\Country;
 use App\State;
@@ -52,7 +53,7 @@ class HomeController extends Controller
         $rules = [
             'name'       => 'required', 
             'mobile_number'     => 'required|unique:'.with(new User)->getTable().',mobile_number',
-            'email'      => 'required',
+            'email'      => 'required|email|unique:'.with(new User)->getTable().',email',
             'state_id'        => 'required',
             'city_id'        => 'required',
             'address1'      =>'required',
@@ -70,21 +71,27 @@ class HomeController extends Controller
             $schedule_time=date('H:i:00',strtotime($schedule_time));
 
             $date=isset($request->date)?$request->date:date(config('constants.MYSQL_STORE_DATE_FORMAT'));
-			$date=date(config('constants.MYSQL_STORE_DATE_FORMAT'),strtotime($date));
+			      $date=date(config('constants.MYSQL_STORE_DATE_FORMAT'),strtotime($date));
             $newdate=$date.' '.$schedule_time;
             
             if(intval($sale_id > 0) && $schedule_time!=''){
                $availabiletime=saleAvailability($newdate,$sale_id,$schedule_time);
                 if($availabiletime == 'true'){
-               	  $data['password'] = Hash::make(123456);
+                    $code = rand(100000,999999);
+               	    $data['password'] = Hash::make($code);
                     $user = User::create($data);
+
+                    if ($user)
+                        $user->notify(
+                            new OTPVerification($code)
+                        );
                     //assign user roles
                	    $user->assignRole(config('constants.ROLE_TYPE_USER_ID'));
 		            if(isset($user->id)){
 		            	$scheduleArray=array('status'=>config('constants.PENDING'),'sale_id'=>$sale_id,'user_id'=>$user->id,'datetime'=>$newdate);
 		                Schedule::create($scheduleArray);
 		            }
-		            $request->session()->flash('success',__('Details Submitted Successfully.'));
+		            $request->session()->flash('success','We have sent a OTP on your email');
 		            return redirect()->back();
                 }else{
  				 	$request->session()->flash('danger',__('Sale Time Not Availabile.'));

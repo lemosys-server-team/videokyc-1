@@ -76,7 +76,7 @@
                                 @endif
                          </div>
                     </div>
-                      <div class="form-group {{$errors->has('password') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
+                    <!-- <div class="form-group {{$errors->has('password') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
                         <label class="col-md-3 control-label" for="password">Password <span style="color:red">*</span></label>
                         <div class="col-md-6">
                             <input type="password" name="password" class="form-control autoFillOff" placeholder="New Password" id="password">
@@ -95,7 +95,7 @@
                             <strong for="password_confirmation" class="help-block">{{ $errors->first('password_confirmation') }}</strong>
                             @endif
                         </div>
-                    </div>
+                    </div> -->
                     <!--    <div class="form-group {{$errors->has('profile_picture') ? config('constants.ERROR_FORM_GROUP_CLASS') : ''}}">
                         <label class="col-md-3 control-label" for="title">Profile Picture </label>
                         <div class="col-md-6">
@@ -150,13 +150,13 @@ jQuery(document).ready(function(){
             hours: {
                 required: true
             },
-            password: {
-                required: true
-            },
-            password_confirmation: {
-                required: true,
-                equalTo: "#password"
-            }
+            // password: {
+            //     required: true
+            // },
+            // password_confirmation: {
+            //     required: true,
+            //     equalTo: "#password"
+            // }
         }
     });
 });
