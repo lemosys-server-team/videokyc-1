@@ -168,6 +168,7 @@ $('.datepicker').datepicker({
 
 
 jQuery(document).ready(function(){
+
     jQuery('#frmregister').validate({
         rules: {
             name: {

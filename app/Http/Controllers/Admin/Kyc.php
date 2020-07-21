@@ -196,32 +196,44 @@ class Kyc extends Controller
      * @return \Illuminate\Http\Response
      */
     public function twilioVideo($twilio_room_id=null){
-        $sid    = "AC9c4946e7297ef20525589bab03294be4";
-        $token  = "3e25eb6bc857461b68d72d839642fd69";
+        $sid    = config('constants.TWILIO_ACCOUNT_SID'); //"AC9c4946e7297ef20525589bab03294be4";
+        $token  = config('constants.TWILIO_API_TOKEN'); //"1794a3ade2ba50c6ec30ddf175038ab1";
         $twilio = new Client($sid, $token);
 
-        // $room = $twilio->video->v1->rooms("RM75976f7a4f963c96ca7588b71217f869")
+        // $room = $twilio->video->v1->rooms($twilio_room_id)
         //                           ->fetch();
         //                           echo "<pre>";
         //                           print_r($room);die;
 
-       /* $recordings = $twilio->video->v1->recordings
-        ->read(["groupingSid" => [$twilio_room_id],
-                "type"=>'video'],2
-        );
-        $recordings_id='';
+        // $recordings = $twilio->video->v1->recordings
+        // ->read(["groupingSid" => [$twilio_room_id],"type"=>'audio'],2
+        // );
+
+        $recordings = $twilio->video->v1->rooms($twilio_room_id)
+                                ->recordings
+                                ->read([], 20);
+
+        $video = $audio = FALSE;
+        $recordings_id=$mediaLocation=[];
         foreach ($recordings as $record) {
-            if($record->type=='video'){
-                $recordings_id=$record->sid;
+            if($record->type=='video' && $video==FALSE){
+                $video = TRUE;
+                $recordings_id['video']=$record->sid;
+            }
+            if($record->type=='audio' && $audio==FALSE){
+                $audio = TRUE;
+                $recordings_id['audio']=$record->sid;
             }
         }
-        if($recordings_id!=''){
-            $uri = "https://video.twilio.com/v1/Recordings/$recordings_id/Media";
-            $response = $twilio->request("GET", $uri);
-            $mediaLocation = $response->getContent()["redirect_to"];
+        if(!empty($recordings_id)){
+            foreach ($recordings_id as $key => $recording_id) {
+                $uri = "https://video.twilio.com/v1/Recordings/$recording_id/Media";
+                $response = $twilio->request("GET", $uri);
+                $mediaLocation[$key] = $response->getContent()["redirect_to"];
+            }
             return $mediaLocation;
         }else{
              return $recordings_id;
-        }*/
+        }
     }
 }

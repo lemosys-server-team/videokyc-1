@@ -40,7 +40,11 @@
 		// Form error class		
 		'ERROR_FORM_GROUP_CLASS' => 'has-error border-left-danger',
 
-		
+		//twilio Keys
+		'TWILIO_ACCOUNT_SID' => 'AC9c4946e7297ef20525589bab03294be4',
+		'TWILIO_API_TOKEN' => '1794a3ade2ba50c6ec30ddf175038ab1',
+		'TWILIO_API_KEY_SID' => 'SK0450f5649c3fbf181c37eae780576937',
+		'TWILIO_API_KEY_SECRET' => 'j6WJ6pw0GhBmAbafpM7vDb4Akt7jYgTR',
 
 		
 

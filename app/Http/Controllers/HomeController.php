@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\OTPVerification;
+use Illuminate\Support\Facades\Crypt;
+use LaraCrafts\UrlShortener\Http\TinyUrlShortener;
+use LaraCrafts\UrlShortener\Tests\Concerns\HasUrlAssertions;
 use App\User;
 use App\Country;
 use App\State;
@@ -14,9 +17,15 @@ use App\Time;
 use App\Holiday;
 use App\Schedule;
 use Validator;
+use Auth;
 
 class HomeController extends Controller
 {
+
+    /**
+     * @var \LaraCrafts\UrlShortener\Http\TinyUrlShortener
+     */
+    protected $shortener;
     /**
      * Create a new controller instance.
      *
@@ -49,7 +58,6 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function register(Request $request){
-
         $rules = [
             'name'       => 'required', 
             'mobile_number'     => 'required|unique:'.with(new User)->getTable().',mobile_number',
@@ -85,13 +93,23 @@ class HomeController extends Controller
                         $user->notify(
                             new OTPVerification($code,$request->mobile_number)
                         );
+
+                    //send SMS through buzzify 
+
+                    $SMScode = getShortURL();
+                    $SMSlink = route('home',['url'=>$SMScode]);
+                    sendSMS($request->mobile_number,$code,$SMSlink);
+
+                    $verifyLink = route('verify',['id'=>Crypt::encryptString($user->id)]);
+                    $user->shorturls()->create(['code'=>$SMScode,'link'=>$verifyLink]);
+
                     //assign user roles
                	    $user->assignRole(config('constants.ROLE_TYPE_USER_ID'));
 		            if(isset($user->id)){
 		            	$scheduleArray=array('status'=>config('constants.PENDING'),'sale_id'=>$sale_id,'user_id'=>$user->id,'datetime'=>$newdate);
 		                Schedule::create($scheduleArray);
 		            }
-		            $request->session()->flash('success','We have sent a OTP on your email');
+		            $request->session()->flash('success','We have sent a OTP on your mobile number'.$code);
 		            return redirect()->back();
                 }else{
  				 	$request->session()->flash('danger',__('Sale Time Not Availabile.'));
@@ -122,10 +140,12 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getScheduleTimes(Request $request){
-      
+        
       	$start_time=Time::where('is_active',TRUE)->min('start_time');
         $end_time=Time::where('is_active',TRUE)->max('end_time');
-        
+        if (isset($request->date) && strtotime($request->date)==strtotime(date('Y-m-d'))) {
+            $start_time=date('H:i:s');
+        }
         $date=isset($request->date)?$request->date:date('Y-m-d');
         $date=date('Y-m-d',strtotime($date));
         $opentime = strtotime($start_time);
@@ -181,5 +201,33 @@ class HomeController extends Controller
 			return 'false ';
 	    }
 	}
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function verify($user_id){
+        $user_id = Crypt::decryptString($user_id);
+        $user = User::findOrFail($user_id);
+        return view('auth.verifyOTP',compact('user'));
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function verifyOTP(Request $request){
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            // Authentication passed...
+            return redirect('user/schedules');
+        }else{
+            $request->session()->flash('danger','You have entered is not valid OTP');
+            return redirect()->back()->withInput();
+        }
+    }    
 
 }

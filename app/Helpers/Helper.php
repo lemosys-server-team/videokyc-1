@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\Support\Str;
 use App\User;
 use App\Setting;
 use App\Holiday;
@@ -67,6 +67,43 @@ function saleAvailability($date=null,$sale_id=null,$time=null){
             return 'false ';
         }
     }
+}
+
+/**
+* Method Name : getShortURL 
+* This is using for return short URL
+*/
+
+function getShortURL(){
+    $code = 'V'.Str::random(7);
+
+    $validator = Validator::make(
+        ['code' => $code],
+        ['code' => 'required|unique:shorturls']
+    );
+
+    if ($validator->fails()) {
+        return getShortURL();
+    }
+    return $code;
+}
+
+/**
+* Method Name : getShortURL 
+* This is using for return short URL
+*/
+
+function sendSMS($mobile_number,$code,$SMSlink){
+    $message = "Welcome to VideoKYC! Click on link ".$SMSlink." to verify. Your OTP is ".$code." Thank You";  
+    $url ="https://buzzify.in/V2/http-api.php?apikey=lB62uhTi7qPXXX6N&senderid=INSPCN&number=".$mobile_number."&message=".$message."&format=json";  
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $result = curl_exec($ch);
+    curl_close($ch);
+
+    return true;
 }
 
 ?>

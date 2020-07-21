@@ -165,7 +165,6 @@ return [
         /*
          * Package Service Providers...
          */
-
         /*
          * Application Service Providers...
          */
@@ -233,6 +232,7 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         'Helper' => App\Helpers\Helper::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+
     ],
 
 ];

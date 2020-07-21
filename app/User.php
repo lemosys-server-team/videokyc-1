@@ -81,5 +81,20 @@ class User extends Authenticatable
         return $this->belongsTo(City::class);
     }
 
+    /**
+     * Get all of the users's shorturls.
+     */
+    public function shorturls()
+    {
+        return $this->morphMany(Shorturl::class, 'shorturlable');
+    }
+
+    /**
+     * Get the Schedule for the blog post.
+     */
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
    
 }

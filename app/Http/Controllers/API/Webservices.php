@@ -247,9 +247,9 @@ class Webservices extends Controller
         $schedule = Schedule::where('id',$data['schedule_id'])->first();
         if(isset($schedule)){
             // Substitute your Twilio Account SID and API Key details
-            $accountSid = 'AC9c4946e7297ef20525589bab03294be4';
-            $apiKeySid = 'SK0450f5649c3fbf181c37eae780576937';
-            $apiKeySecret = 'j6WJ6pw0GhBmAbafpM7vDb4Akt7jYgTR';
+            $accountSid = config('constants.TWILIO_ACCOUNT_SID'); //'AC9c4946e7297ef20525589bab03294be4'
+            $apiKeySid = config('constants.TWILIO_API_KEY_SID'); //'SK0450f5649c3fbf181c37eae780576937';
+            $apiKeySecret = config('constants.TWILIO_API_KEY_SECRET'); //'j6WJ6pw0GhBmAbafpM7vDb4Akt7jYgTR';
 
             //$twilio = new Client($accountSid, $apiKeySecret);
             // $new_key = $twilio->newKeys->create();
@@ -301,9 +301,10 @@ class Webservices extends Controller
         $schedule = Schedule::where('user_id',$data['user_id'])->whereDate('datetime', '=', $date)->first();
         if(isset($schedule)){
             // Substitute your Twilio Account SID and API Key details
-            $accountSid = 'AC9c4946e7297ef20525589bab03294be4';
-            $apiKeySid = 'SK0450f5649c3fbf181c37eae780576937';
-            $apiKeySecret = 'j6WJ6pw0GhBmAbafpM7vDb4Akt7jYgTR';
+
+            $accountSid = config('constants.TWILIO_ACCOUNT_SID'); //'AC9c4946e7297ef20525589bab03294be4'
+            $apiKeySid = config('constants.TWILIO_API_KEY_SID'); //'SK0450f5649c3fbf181c37eae780576937';
+            $apiKeySecret = config('constants.TWILIO_API_KEY_SECRET'); //'j6WJ6pw0GhBmAbafpM7vDb4Akt7jYgTR';
 
             $identity = uniqid();
            

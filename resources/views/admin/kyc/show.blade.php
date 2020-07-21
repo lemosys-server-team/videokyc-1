@@ -36,7 +36,18 @@
                                 <br>
                                 <span><b>Status  :</b>  {{ isset($schedule->final_status)?$schedule->final_status:'' }} </span>
                                 <br>
-                                 <span><b>Video :</b>  <a href="{{ isset($videourl)?$videourl:'' }}" ><li class="fa fa-download"></li></a>   </span>
+                                @if(isset($videourl['video']) && $videourl['video']!='')
+                                     <span><b>Video :</b>  
+                                            <a href="{{ isset($videourl['video'])?$videourl['video']:'' }}" ><li class="fa fa-download"></li></a>  
+                                    </span>
+                                @endif 
+                                <br>
+                                @if(isset($videourl['audio']) && $videourl['audio']!='')
+                                     <span><b>Audio :</b>  
+                                            <a href="{{ isset($videourl['audio'])?$videourl['audio']:'' }}" ><li class="fa fa-download"></li></a>  
+                                    </span>
+                                @endif 
+                                
                             </div>
                         </div>
                     </div>
