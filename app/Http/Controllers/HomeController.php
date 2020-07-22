@@ -109,7 +109,7 @@ class HomeController extends Controller
 		            	$scheduleArray=array('status'=>config('constants.PENDING'),'sale_id'=>$sale_id,'user_id'=>$user->id,'datetime'=>$newdate);
 		                Schedule::create($scheduleArray);
 		            }
-		            $request->session()->flash('success','We have sent a OTP on your mobile number'.$code);
+		            $request->session()->flash('success','We have sent a OTP on your mobile number');
 		            return redirect()->back();
                 }else{
  				 	$request->session()->flash('danger',__('Sale Time Not Availabile.'));
@@ -225,7 +225,7 @@ class HomeController extends Controller
             // Authentication passed...
             return redirect('user/schedules');
         }else{
-            $request->session()->flash('danger','You have entered is not valid OTP');
+            $request->session()->flash('danger','You have entered invalid OTP');
             return redirect()->back()->withInput();
         }
     }    

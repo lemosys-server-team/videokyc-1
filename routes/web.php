@@ -38,6 +38,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::resource('profile', 'ProfileController')->only(['index', 'store']);
         Route::resource('user/schedules', 'SchedulesController')->only(['index']);
 		Route::get('user/schedules/call/{id}', 'SchedulesController@call')->name('schedules.call');
+		Route::post('user/schedules/completeRoomSchedule', 'SchedulesController@completeRoomSchedule')->name('schedules.completeRoomSchedule');
 		
 		Route::group(['middleware' => ['check_permission'],'namespace'=>'Admin','prefix'=>'admin', 'as' => 'admin.'], function(){	
 	        Route::get('dashboard', 'DashboardController@index')->name('dashboard');

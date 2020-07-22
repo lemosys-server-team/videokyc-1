@@ -94,15 +94,24 @@ function getShortURL(){
 */
 
 function sendSMS($mobile_number,$code,$SMSlink){
-    $message = "Welcome to VideoKYC! Click on link ".$SMSlink." to verify. Your OTP is ".$code." Thank You";  
-    $url ="https://buzzify.in/V2/http-api.php?apikey=lB62uhTi7qPXXX6N&senderid=INSPCN&number=".$mobile_number."&message=".$message."&format=json";  
+    // Account details
+    $senderid = urlencode(config('constants.SMS_SENDER_ID'));
+    $apiKey = urlencode(config('constants.SMS_API_KEY'));
+    $url=config('constants.SMS_API_URL');
     
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    $result = curl_exec($ch);
-    curl_close($ch);
+    // Message details
+    $message = urlencode("Welcome to VideoKYC! Click on link ".$SMSlink." to verify. Your OTP is ".$code." Thank You");
+    $parameters_import="apikey=$apiKey&senderid=$senderid&number=$mobile_number&message=$message&format=json";
+    $new_url_import =  $url . $parameters_import;
 
+    $curl_handles = curl_init();
+    curl_setopt($curl_handles, CURLOPT_URL, $new_url_import);
+    curl_setopt($curl_handles, CURLOPT_CONNECTTIMEOUT, 1000);
+    curl_setopt($curl_handles, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($curl_handles, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl_handles, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.112 Safari/534.30');
+    curl_setopt($curl_handles,CURLOPT_TIMEOUT, 300);
+    $curlresponse = curl_exec($curl_handles);
     return true;
 }
 

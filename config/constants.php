@@ -46,7 +46,10 @@
 		'TWILIO_API_KEY_SID' => 'SK0450f5649c3fbf181c37eae780576937',
 		'TWILIO_API_KEY_SECRET' => 'j6WJ6pw0GhBmAbafpM7vDb4Akt7jYgTR',
 
-		
+		//buzzify SMS
+		'SMS_SENDER_ID'=>'INSPCN',
+		'SMS_API_KEY'=>'lB62uhTi7qPXXX6N',
+		'SMS_API_URL'=>'http://buzzify.in/V2/http-api.php?',
 
 	];
 ?>

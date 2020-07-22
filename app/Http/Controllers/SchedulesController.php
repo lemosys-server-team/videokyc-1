@@ -35,6 +35,10 @@ class SchedulesController extends Controller
      */
     public function call($schedule_id){
         $schedule = Schedule::findOrFail($schedule_id);
+        if (isset($schedule->status) && $schedule->status == config('constants.COMPLETED')) {
+            return redirect()->route('schedules.index')
+                        ->with('danger','You have already completed this schedule.');
+        }
         // Substitute your Twilio Account SID and API Key details
         $accountSid = config('constants.TWILIO_ACCOUNT_SID'); 
         $apiKeySid = config('constants.TWILIO_API_KEY_SID'); 
@@ -60,6 +64,19 @@ class SchedulesController extends Controller
         $token->addGrant($grant);
         // Serialize the token as a JWT
         $token= $token->toJWT();
-       return view('schedule/call',compact('chatroom','token'));
+        return view('schedule/call',compact('chatroom','token','schedule_id'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function completeRoomSchedule(Request $request){
+        $schedule = Schedule::findOrFail($request->schedule_id);
+        $schedule->status= config('constants.COMPLETED');
+        $schedule->update();
+        Auth::logout();
+        return redirect('/');
     }
 }
