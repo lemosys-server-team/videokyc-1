@@ -299,6 +299,9 @@ class Schedules extends Controller
 
             $start_time=Time::where('id',$time_id)->where('is_active',TRUE)->min('start_time');
             $end_time=Time::where('id',$time_id)->where('is_active',TRUE)->max('end_time');
+            if (isset($date) && strtotime($date) <= strtotime(date('Y-m-d'))) {
+                $start_time=date('H:i:s');
+            }
 
             if($start_time!='' && $end_time!=''){
               $opentime = strtotime($start_time);

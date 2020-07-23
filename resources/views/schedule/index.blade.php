@@ -24,7 +24,12 @@
           </div>
 
           <div class="col-md-12 col-lg-12 col-xl-12 my-auto mx-auto wd-100p">
-          <p class="font-weight-bolder">Schedules</p>
+          <span class="font-weight-bolder"  style="margin-top: 10px;">Schedules</span>
+          <form id="frm-logout" action="{{ route('logout') }}" method="POST" style="display: none;">
+            {{ csrf_field() }}
+          </form>
+
+          <a class="btn btn-sm btn-danger"  style="margin-top: 5px;" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('frm-logout').submit();">Close</a>
 
           @if($flash = session('error'))            
             <div class="alert alert-danger alert-dismissible" role="alert">
@@ -39,7 +44,7 @@
               </div>
           @endif
 
-          <table class="table table-bordered">
+          <table class="table table-bordered" style="margin-top: 10px;">
             <thead class="thead-dark">
               <tr>
                 <th>Call Schedules for Today</th>
