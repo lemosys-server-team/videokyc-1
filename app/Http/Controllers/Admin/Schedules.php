@@ -171,6 +171,16 @@ class Schedules extends Controller
             if($availabiletime=='true'){
               $scheduleArray=array('status'=>config('constants.PENDING'),'sale_id'=>$sale_id,'user_id'=>$user_id,'datetime'=>$newdate);
               Schedule::create($scheduleArray);
+              $user = User::find($user_id);
+              if ($user) {
+                $code = rand(100000,999999);
+                $user->password = Hash::make($code);
+                $user->update();
+                //send SMS through buzzify 
+                $SMScode = getShortURL();
+                $SMSlink = route('home',['url'=>$SMScode]);
+                sendSMS($user->mobile_number,$code,$SMSlink);
+              }
               $request->session()->flash('success',__('global.messages.add'));
             }else{
               $request->session()->flash('danger',__('Sale Time Not Availabile.'));
@@ -254,6 +264,17 @@ class Schedules extends Controller
             if($availabiletime=='true'){
               $scheduleArray=array('status'=>config('constants.PENDING'),'sale_id'=>$sale_id,'user_id'=>$user_id,'datetime'=>$newdate);
                $schedule->update($scheduleArray);
+
+               if ($user) {
+                  $code = rand(100000,999999);
+                  $user->password = Hash::make($code);
+                  $user->update();
+                  //send SMS through buzzify 
+                  $SMScode = getShortURL();
+                  $SMSlink = route('home',['url'=>$SMScode]);
+                  sendSMS($user->mobile_number,$code,$SMSlink);
+                }
+
                $request->session()->flash('success',__('global.messages.update'));
             }else{
               $request->session()->flash('danger',__('Sale Time Not Availabile.'));
