@@ -345,7 +345,7 @@ class Schedules extends Controller
                           if($selected_time==date('h:i A', $opentime)){
                             $select='selected';
                           }
-                          $html.= '<option '.$select.' value="'.date('h:i A', $opentime) .'">' . date('h:i A', $opentime) . '</option>';
+                          $html.= '<option '.$select.' value="'.date('h:i A', $opentime) .'">' . date('h:i A', $opentime). '</option>';
                         
                       }
                   $opentime = strtotime('+15 minutes', $opentime);
