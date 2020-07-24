@@ -21,11 +21,8 @@ class SchedulesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){
-        $user = User::with('schedules')->whereHas('schedules',function($query){
-          $query->where(\DB::raw('DATE_FORMAT(datetime, "%Y-%m-%d h:i:s")'),'>=', date('Y-m-d h:i:s'));
-          $query->where('status', 'pending');
-        })->find(Auth::id());
-        return view('schedule/index',compact('user'));
+        $schedules = Schedule::where('status', config('constants.PENDING'))->where(\DB::raw('DATE_FORMAT(datetime, "%Y-%m-%d")'),'=', date('Y-m-d'))->where(\DB::raw('DATE_FORMAT(datetime, "%H:%i:%s")'),'>=', date('H:i:s'))->where('user_id',Auth::id())->get();
+        return view('schedule/index',compact('schedules'));
     }
 
     /**
@@ -37,7 +34,11 @@ class SchedulesController extends Controller
         $schedule = Schedule::findOrFail($schedule_id);
         if (isset($schedule->status) && $schedule->status == config('constants.COMPLETED')) {
             return redirect()->route('schedules.index')
-                        ->with('danger','You have already completed this schedule.');
+                        ->with('error','You have already completed this schedule.');
+        }
+        if (isset($schedule->datetime) && $schedule->datetime > date('Y-m-d h:i:s')) {
+            return redirect()->route('schedules.index')
+                        ->with('error',"You don't have schedule for this time.");
         }
         // Substitute your Twilio Account SID and API Key details
         $accountSid = config('constants.TWILIO_ACCOUNT_SID'); 
@@ -72,11 +73,10 @@ class SchedulesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function completeRoomSchedule(Request $request){
-        $schedule = Schedule::findOrFail($request->schedule_id);
+    public function thankyou($schedule_id){
+        $schedule = Schedule::findOrFail($schedule_id);
         $schedule->status= config('constants.COMPLETED');
         $schedule->update();
-        Auth::logout();
-        return redirect('/');
+        return view('schedule/thankyou');
     }
 }

@@ -7,8 +7,6 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\OTPVerification;
 use Illuminate\Support\Facades\Crypt;
-use LaraCrafts\UrlShortener\Http\TinyUrlShortener;
-use LaraCrafts\UrlShortener\Tests\Concerns\HasUrlAssertions;
 use App\User;
 use App\Country;
 use App\State;
@@ -21,11 +19,6 @@ use Auth;
 
 class HomeController extends Controller
 {
-
-    /**
-     * @var \LaraCrafts\UrlShortener\Http\TinyUrlShortener
-     */
-    protected $shortener;
     /**
      * Create a new controller instance.
      *
@@ -140,11 +133,11 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getScheduleTimes(Request $request){
-        
+        $startTime =Time::where('is_active',TRUE)->min('start_time');
       	$start_time=Time::where('is_active',TRUE)->min('start_time');
         $end_time=Time::where('is_active',TRUE)->max('end_time');
-        if (isset($request->date) && strtotime($request->date)==strtotime(date('Y-m-d'))) {
-            $start_time=date('H:i:s');
+        if (isset($request->date) && strtotime(date('Y-m-d', strtotime($request->date))==strtotime(date('Y-m-d'))) {
+            $startTime=date('H:i:s');
         }
         $date=isset($request->date)?$request->date:date('Y-m-d');
         $date=date('Y-m-d',strtotime($date));
@@ -157,15 +150,17 @@ class HomeController extends Controller
         })->where('is_active',TRUE)->get()->toArray();
         if(count($sales) > 0){
             while($opentime < $closetime){
-                $time=date('H:i:00', $opentime);
-                $newdate=$date.' '.$time;
-                foreach ($sales as $key => $sale) {
-                    //$time_id=isset($sale['time_id'])?$sale['time_id']:0;
-                    $sale_id=isset($sale['id'])?$sale['id']:0;
-                    $times=saleAvailability($newdate,$sale_id,$time);
-                    if($times=='true'){
-                        $html.= '<option value="'.$sale_id.'-'. date('h:i A', $opentime) .'">' . date('h:i A', $opentime) . '</option>';
-                        break;
+                if (strtotime($startTime) > $opentime) {
+                    $time=date('H:i:00', $opentime);
+                    $newdate=$date.' '.$time;
+                    foreach ($sales as $key => $sale) {
+                        //$time_id=isset($sale['time_id'])?$sale['time_id']:0;
+                        $sale_id=isset($sale['id'])?$sale['id']:0;
+                        $times=saleAvailability($newdate,$sale_id,$time);
+                        if($times=='true'){
+                            $html.= '<option value="'.$sale_id.'-'. date('h:i A', $opentime) .'">' . date('h:i A', $opentime) . '</option>';
+                            break;
+                        }
                     }
                 }
                 $opentime = strtotime('+15 minutes', $opentime);

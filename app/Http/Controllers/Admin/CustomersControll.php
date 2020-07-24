@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\OTPVerification;
+use Illuminate\Support\Facades\Crypt;
 use App\User;
-use App\Time;
+use App\State;
+use App\City;
+use App\Holiday;
 use App\Schedule;
 use Validator;
 use Auth;
@@ -35,10 +39,107 @@ class CustomersControll extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
+    public function create(){
+        $state = State::where(['is_active'=>TRUE])->pluck('title', 'id');
+        $city=City::where(['is_active'=>TRUE])->pluck('title', 'id');
+        $holidays=Holiday::where(['is_active'=>TRUE])->pluck('date')->toArray();
+        $holiday='';
+        if(!empty($holidays)){
+            $date=implode(' ', $holidays);
+            $holiday= json_encode(str_replace(' ', ',', $date));
+        }
+        return view('admin.users.customer_create', compact('state','city','holiday'));
     }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request){
+        $rules = [
+            'name'           => 'required', 
+            'email'          => 'required|email|unique:'.with(new User)->getTable().',email',
+            'mobile_number'  => 'required|unique:'.with(new User)->getTable().',mobile_number',
+            'state_id'       => 'required',
+            'city_id'        => 'required',
+            'address1'       =>'required',
+            'address2'       =>'required'
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+            $data = $request->all();
+            
+            $code = rand(100000,999999);
+            $data['password'] = Hash::make($code);
+            $user = User::create($data);
+
+            if ($user)
+                $user->notify(
+                    new OTPVerification($code,$request->mobile_number)
+                );
+            //assign user roles
+            $user->assignRole(config('constants.ROLE_TYPE_USER_ID'));
+            $request->session()->flash('success',__('global.messages.add'));
+            return redirect()->route('admin.customers.index');
+        }else {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+    }
+
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id){
+        $user = User::findOrFail($id);
+        $state = State::where(['is_active'=>TRUE])->pluck('title', 'id');
+        $city=City::where(['is_active'=>TRUE])->pluck('title', 'id');
+        $holidays=Holiday::where(['is_active'=>TRUE])->pluck('date')->toArray();
+        $holiday='';
+        if(!empty($holidays)){
+            $date=implode(' ', $holidays);
+            $holiday= json_encode(str_replace(' ', ',', $date));
+        }
+        return view('admin.users.customer_edit',compact('user','state','city','holiday'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id){
+        $user = User::findOrFail($id);
+
+        $rules = [
+            'name'           => 'required', 
+            'email'          => 'required|email|unique:'.with(new User)->getTable().',email,'.$user->getKey(),
+            'mobile_number'  => 'required|unique:'.with(new User)->getTable().',mobile_number,'.$user->getKey(),
+            'state_id'       => 'required',
+            'city_id'        => 'required',
+            'address1'       => 'required',
+            'address2'       => 'required'
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+            $data = $request->all();
+            $user->update($data);
+            $request->session()->flash('success',__('global.messages.update'));
+            return redirect()->route('admin.customers.index');
+        }else {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+    }
+
      /**
      * Display a listing of the resource.
      *
@@ -71,6 +172,7 @@ class CustomersControll extends Controller
             ->addColumn('action', function ($user) {
                 return
                     // Delete
+                '<a href="'.route('admin.customers.edit',[$user->id]).'" class="btn btn-primary btn-circle btn-sm"><i class="fas fa-edit"></i></a> '.
                       Form::open(array(
                                   'style' => 'display: inline-block;',
                                   'method' => 'DELETE',
@@ -81,62 +183,5 @@ class CustomersControll extends Controller
             })
             ->rawColumns(['action'])
             ->make(true);
-    }
-
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

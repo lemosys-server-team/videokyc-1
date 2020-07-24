@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
 use App\User;
 use App\Schedule;
 use App\Holiday;
@@ -180,6 +182,9 @@ class Schedules extends Controller
                 $SMScode = getShortURL();
                 $SMSlink = route('home',['url'=>$SMScode]);
                 sendSMS($user->mobile_number,$code,$SMSlink);
+
+                $verifyLink = route('verify',['id'=>Crypt::encryptString($user->id)]);
+                $user->shorturls()->create(['code'=>$SMScode,'link'=>$verifyLink]);
               }
               $request->session()->flash('success',__('global.messages.add'));
             }else{
@@ -273,6 +278,9 @@ class Schedules extends Controller
                   $SMScode = getShortURL();
                   $SMSlink = route('home',['url'=>$SMScode]);
                   sendSMS($user->mobile_number,$code,$SMSlink);
+
+                  $verifyLink = route('verify',['id'=>Crypt::encryptString($user->id)]);
+                  $user->shorturls()->create(['code'=>$SMScode,'link'=>$verifyLink]);
                 }
 
                $request->session()->flash('success',__('global.messages.update'));
@@ -304,7 +312,6 @@ class Schedules extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getScheduleTimes(Request $request){
-      
         $date=isset($request->date)?$request->date:'';
         $selected_date=isset($request->selected_date)?$request->selected_date:'';
         $selected_time='';
@@ -318,10 +325,11 @@ class Schedules extends Controller
             $sale=User::where('id',$sale_id)->first()->toArray();
             $time_id=isset($sale['time_id'])?$sale['time_id']:'';
 
+            $startTime =Time::where('id',$time_id)->where('is_active',TRUE)->min('start_time');
             $start_time=Time::where('id',$time_id)->where('is_active',TRUE)->min('start_time');
             $end_time=Time::where('id',$time_id)->where('is_active',TRUE)->max('end_time');
-            if (isset($date) && strtotime($date) <= strtotime(date('Y-m-d'))) {
-                $start_time=date('H:i:s');
+            if (isset($request->date) && strtotime(date('Y-m-d', strtotime($request->date)))==strtotime(date('Y-m-d'))) {
+              $startTime=date('H:i:s');
             }
 
             if($start_time!='' && $end_time!=''){
@@ -333,7 +341,7 @@ class Schedules extends Controller
                   $newdate=$date.' '.$time;
                       $times=$this->saleAvailability($newdate,$sale_id,$time,$selected_date);
                       $select='';
-                      if($times=='true'){
+                      if($times=='true' && $opentime >= strtotime($startTime)){
                           if($selected_time==date('h:i A', $opentime)){
                             $select='selected';
                           }

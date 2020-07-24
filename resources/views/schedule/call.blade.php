@@ -22,12 +22,24 @@
               @endif
             </div>
           </div>
-
+          @if($flash = session('error'))            
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                 {{ $flash }}
+            </div>
+          @endif
+          @if($flash = session('success'))      
+              <div class="alert alert-success alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                   {{ $flash }}
+              </div>
+          @endif
           <div class="col-md-12 col-lg-12 col-xl-12 my-auto mx-auto wd-100p">
             <div class="title m-b-md">
                  Video Chat Rooms
             </div>
-            <a href="javascript:void(0);" onclick="completeRoomSchedule();" id="completeCall" class="btn btn-danger">Disconnect</a>
+            <a href="{{route('schedules.thankyou',['id'=>$schedule_id])}}" id="completeCall" class="btn btn-danger">Disconnect</a>
+            <div id="room"></div>
             <div id="join-room"></div>
           </div>
         </div>
@@ -60,8 +72,8 @@
        }
 
        room.on('participantConnected', function(participant) {
-           console.log("Joining: "+participant.identity);
-           participantConnected(participant,room);
+          console.log("Joining: "+participant.identity);
+          participantConnected(participant,room);
        });
 
        room.on('participantDisconnected', function(participant) {
@@ -77,7 +89,7 @@
    const div = document.createElement('div');
    div.id = participant.sid;
    div.setAttribute("style", "float: left; margin: 10px;");
-   div.innerHTML = "<div style='clear:both'>Room Name : "+room.name+"</div>";
+   $('#room').text('Room Name : '+room.name);
 
    participant.tracks.forEach(function(track) {
        trackAdded(div, track)
@@ -87,6 +99,7 @@
        trackAdded(div, track)
    });
    participant.on('trackRemoved', trackRemoved);
+
    document.getElementById('join-room').appendChild(div);
 }
 
@@ -100,16 +113,12 @@ function trackAdded(div, track) {
    div.appendChild(track.attach());
    var video = div.getElementsByTagName("video")[0];
    if (video) {
-       video.setAttribute("style", "min-width:960px;");
+       video.setAttribute("style", "min-width:300px;");
    }
 }
 
 function trackRemoved(track) {
    track.detach().forEach( function(element) { element.remove() });
-}
-
-function completeRoomSchedule() {
-  $.post("{{ route('schedules.completeRoomSchedule') }}",{'schedule_id': "{{ $schedule_id }}"});
 }
 </script>
 @endsection

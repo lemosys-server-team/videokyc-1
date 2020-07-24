@@ -21,6 +21,12 @@
       <div class="card">
         <div class="card-header py-3 cstm_hdr">
             <h6 class="m-0 font-weight-bold text-primary">Customers List</h6>
+            <a href="{{route('admin.customers.create')}}" class="btn btn-sm btn-icon-split float-right btn-outline-warning">
+                <span class="icon text-white-50">
+                  <i class="fas fa-plus"></i>
+                </span>
+                <span class="text">Add Customer</span>
+            </a>
         </div>
         <div class="card-body">
          <!--  <div class="well mb-3">

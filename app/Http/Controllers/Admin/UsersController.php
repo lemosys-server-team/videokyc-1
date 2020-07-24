@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
-use App\Notifications\OTPVerification;
 use App\User;
 use App\Time;
 use App\Schedule;
@@ -145,11 +144,6 @@ class UsersController extends Controller
             $code = rand(100000,999999);
             $data['password'] = Hash::make($code);
             $user = User::create($data);
-
-            if ($user)
-              $user->notify(
-                  new OTPVerification($code,$request->mobile_number)
-              );
 
             $user_id=$user->id;
             // assign user roles

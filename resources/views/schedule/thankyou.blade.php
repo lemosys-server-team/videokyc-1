@@ -22,15 +22,6 @@
               @endif
             </div>
           </div>
-
-          <div class="col-md-12 col-lg-12 col-xl-12 my-auto mx-auto wd-100p">
-          <span class="font-weight-bolder"  style="margin-top: 10px;">Schedules</span>
-          <form id="frm-logout" action="{{ route('logout') }}" method="POST" style="display: none;">
-            {{ csrf_field() }}
-          </form>
-
-          <a class="btn btn-sm btn-danger"  style="margin-top: 5px;" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('frm-logout').submit();">Close</a>
-
           @if($flash = session('error'))            
             <div class="alert alert-danger alert-dismissible" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
@@ -43,28 +34,14 @@
                    {{ $flash }}
               </div>
           @endif
+          <div class="col-md-12 col-lg-12 col-xl-12 my-auto mx-auto wd-100p">
+            <a class="btn btn-sm btn-primary" style="margin-top: 5px;" href="{{ route('schedules.index') }}" >Back</a>
 
-          <table class="table table-bordered" style="margin-top: 10px;">
-            <thead class="thead-dark">
-              <tr>
-                <th>Call Schedules for Today</th>
-              </tr>
-            </thead>
-            <tbody>
-              @if(isset($schedules) && $schedules!=NULL)
-                @foreach($schedules as $schedule)
-                  <tr>
-                    <td><a  href="{{ route('schedules.call',['id'=>$schedule->id]) }}" class="btn btn-success" >Join Call at {{ date('h:i A', strtotime($schedule->datetime)) }}</a> <span class="badge badge-secondary">{{  ucfirst($schedule->status) }}</span></td>
-                  </tr>
-                @endforeach
-              @else
-              <tr><td>No schedules available for today</td></tr>
-              @endif
-            </tbody>
-          </table>
+            <div class="title m-b-md">
+                Hii, Thank You for calling with Us
+            </div>
         </div>
         </div>
       </div>
 </div>
-
 @endsection
