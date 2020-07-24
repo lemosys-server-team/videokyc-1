@@ -136,7 +136,7 @@ class HomeController extends Controller
         $startTime =Time::where('is_active',TRUE)->min('start_time');
       	$start_time=Time::where('is_active',TRUE)->min('start_time');
         $end_time=Time::where('is_active',TRUE)->max('end_time');
-        if (isset($request->date) && strtotime(date('Y-m-d', strtotime($request->date))==strtotime(date('Y-m-d'))) {
+        if (isset($request->date) && strtotime(date('Y-m-d', strtotime($request->date))==strtotime(date('Y-m-d')))) {
             $startTime=date('H:i:s');
         }
         $date=isset($request->date)?$request->date:date('Y-m-d');
