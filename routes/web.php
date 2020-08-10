@@ -15,6 +15,7 @@
 // 	return redirect('register');
 // })->where(['url' => '|home'])->name('home');
 
+Route::view('/camera', 'camera');
 if(env('API_URL')=="" || env('API_URL')==url('/')){
 	Auth::routes(['register'=>false]);
 	Route::get('index', 'HomeController@index')->name('index');

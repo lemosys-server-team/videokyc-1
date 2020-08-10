@@ -36,10 +36,10 @@ class SchedulesController extends Controller
             return redirect()->route('schedules.index')
                         ->with('error','You have already completed this schedule.');
         }
-        if (isset($schedule->datetime) && $schedule->datetime > date('Y-m-d h:i:s')) {
-            return redirect()->route('schedules.index')
-                        ->with('error',"You don't have schedule for this time.");
-        }
+        // if (isset($schedule->datetime) && $schedule->datetime > date('Y-m-d h:i:s')) {
+        //     return redirect()->route('schedules.index')
+        //                 ->with('error',"You don't have schedule for this time.");
+        // }
         // Substitute your Twilio Account SID and API Key details
         $accountSid = config('constants.TWILIO_ACCOUNT_SID'); 
         $apiKeySid = config('constants.TWILIO_API_KEY_SID'); 
